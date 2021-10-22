@@ -1,3 +1,18 @@
+# Incicle Header
+
+Testing incicle header component as npm package to use in all incicle modules.
+
+### Props
+
+| Props name  |  Description  |
+| ------------------- | ------------------- |
+|  user |  User object. It can be a person or a company. On incicle modules, it can be found on useAuth() function. |
+|  profiles |  Profile object from authenticated user. It's usually provided by a context on module. |
+|  companySelected | Object from authenticated user. It's usually provided by a context on module.  |
+|  api |  Axios instance, used to send request for the backend. |
+|  signOut |  Function to sign out the authenticated user. |
+|  production |  Boolean. Used to define if header will call production routes or stage routes. |
+
 # TSDX React w/ Storybook User Guide
 
 Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
