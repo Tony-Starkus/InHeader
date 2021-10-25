@@ -25,7 +25,10 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import WorkIcon from "@mui/icons-material/Work";
 import logoImage from './assets/logo_incicle.svg';
 import Notifications from "./Notifications/notifications";
+import { getNotifications } from './Notifications/functions'
 import { HeaderInStyle } from "./styles";
+
+import { defineLinks } from './utils/functions'
 
 interface props {
   user: any;
@@ -48,7 +51,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   const [companies, setCompanies] = useState<any[]>([]);
   const [accountType, setAccountType] = useState("");
   const [selectedCompany, setSelectedCompany] = useState<any>();
-  const [links, setLinks] = useState({} as any);
+  const links = defineLinks(production);
 
   const [anchorProfileEl, setAnchorProfileEl] = React.useState(null);
   const openMenuProfile = Boolean(anchorProfileEl);
@@ -60,32 +63,16 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   const openNotifications = Boolean(anchorNotifications);
 
   const [allNotifications, setAllNotifications] = useState([]) as any;
-  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(
-    null,
-  ) as any;
-
-  const defineLinks = () => {
-    if(production) {
-      setLinks({
-        web: {
-          social: "https://social-network-frontend.incicle.com/",
-          schedule: "https://schedule.incicle.com/",
-          project: "https://projects.incicle.com/",
-        }
-      });
-    } else {
-      setLinks({
-        web: {
-          social: "https://social-network-frontend-stage.incicle.com/",
-          schedule: "https://schedule-stage.incicle.com/",
-          project: "https://projects-stage.incicle.com/",
-        }
-      });
-    }
-  }
+  const [hasNewNotifications, setHasNewNotifications] = useState(false)
 
   useEffect(() => {
-    defineLinks();
+    
+    getNotifications(api, baseNotifications, 1, 10).then((response: any) => {
+      setAllNotifications(response.data)
+      if(response.unread > 0) {
+        setHasNewNotifications(true)
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -106,12 +93,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
           setSelectedCompany(user.companies[0]);
         }
         setCompanies(user.companies);
-      }
-
-      if (!unreadNotificationsCount) {
-        api.get(`${baseNotifications}notifications/me`).then((response: any) => {
-          setUnreadNotificationsCount(response.data.unread);
-        });
       }
     }
   }, [companySelected, user]); // eslint-disable-line
@@ -450,7 +431,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
               sx={{ width: 35, height: 35 }}
               onClick={showNotifications}
             >
-              <Badge badgeContent={unreadNotificationsCount} color="primary">
+              <Badge color="primary" invisible={!hasNewNotifications} variant="dot">
                 <NotificationsIcon sx={{ width: 25, height: 25 }} />
               </Badge>
             </IconButton>

@@ -34,16 +34,18 @@ const buildNotificationUrl = (notification: NotificationItem, production: boolea
   if(notification.module === modules.project.name) { // PROJECT
 
     if(notification.type === modules.project.types.activity) {
-      window.location.href = `${links.web.project}`;
+      return`${links.web.project}`;
     }
 
   } else if(notification.module === modules.social_network.name) { // SOCIAL NETWORK
 
     if(notification.type === modules.social_network.types.publication) {
-      window.location.href = `${links.web.social}publication/${notification.common.publication_id}`;
+      return `${links.web.social}publication/${notification.common.publication_id}`;
     }
 
   }
+
+  return '#';
 
 }
 
