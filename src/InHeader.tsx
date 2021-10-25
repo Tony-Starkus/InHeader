@@ -7,25 +7,23 @@ import {
   MenuItem,
   Divider,
   ListItemIcon,
-  Badge,
   Stack,
   Paper,
   Link,
   Chip,
   Box,
 } from "@mui/material";
-import { useToasts } from "react-toast-notifications";
+// import { useToasts } from "react-toast-notifications";
 import { Settings } from "@mui/icons-material";
 import ExitToApp from "@mui/icons-material/ExitToApp";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
 import Autocomplete from "@mui/material/Autocomplete";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import WorkIcon from "@mui/icons-material/Work";
-import logoImage from './assets/logo_incicle.svg';
 import Notifications from "./Notifications/notifications";
-import { getNotifications } from './Notifications/functions'
+// import { getNotifications } from './Notifications/functions'
 import { HeaderInStyle } from "./styles";
 
 import { defineLinks } from './utils/functions'
@@ -42,9 +40,9 @@ interface props {
 export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api, signOut, production }) => {
 
   const baseUrl = production ? "https://socialnetwork-adonis.incicle.com/api/v1" : "https://socialnetwork-adonis-stage.incicle.com/api/v1";
-  const baseNotifications = production ? "https://notifications.incicle.com/api/v1/" : "https://notifications-stage.incicle.com/api/v1/";
+  // const baseNotifications = production ? "https://notifications.incicle.com/api/v1/" : "https://notifications-stage.incicle.com/api/v1/";
 
-  const { addToast } = useToasts();
+  // const { addToast } = useToasts();
   const [myProfile, setMyProfile] = useState({}) as any;
   const [resultPerson, setResultPerson] = useState([]) as any;
   const [hasResult, setHasResult] = useState(false);
@@ -63,17 +61,20 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   const openNotifications = Boolean(anchorNotifications);
 
   const [allNotifications, setAllNotifications] = useState([]) as any;
-  const [hasNewNotifications, setHasNewNotifications] = useState(false)
+  // const [hasNewNotifications, setHasNewNotifications] = useState(false)
 
   useEffect(() => {
-    
-    getNotifications(api, baseNotifications, 1, 10).then((response: any) => {
-      setAllNotifications(response.data)
-      if(response.unread > 0) {
-        setHasNewNotifications(true)
-      }
-    });
-  }, []);
+    setAllNotifications([]);
+  }, [])
+
+  // useEffect(() => {
+  //   getNotifications(api, baseNotifications, 1, 10).then((response: any) => {
+  //     setAllNotifications(response.data)
+  //     if (response.unread > 0) {
+  //       setHasNewNotifications(true)
+  //     }
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (user.config.default_profile_type === "person") {
@@ -86,7 +87,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
         if (companySelected && companysIds.includes(companySelected)) {
           const localCompanySelected =
             user.companies[
-              user.companies.findIndex((pos: any) => pos.id === companySelected)
+            user.companies.findIndex((pos: any) => pos.id === companySelected)
             ];
           setSelectedCompany(localCompanySelected);
         } else {
@@ -128,21 +129,21 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
     setAnchorProfileEl(null);
   };
 
-  const showNotifications = async (event: any) => {
-    setAnchorNotifications(event.currentTarget);
-    try {
-      const response = await api.get(`${baseNotifications}notifications/me`);
-      if (response?.status === 200) {
-        setAllNotifications(response?.data?.data);
-      }
-    } catch (err) {
-      addToast(
-        `O sistema de notificações não está disponível no momento. Tente novamente mais tarde.`,
-        { appearance: "error" },
-      );
-      console.error(err);
-    }
-  };
+  // const showNotifications = async (event: any) => {
+  //   setAnchorNotifications(event.currentTarget);
+  //   try {
+  //     const response = await api.get(`${baseNotifications}notifications/me`);
+  //     if (response?.status === 200) {
+  //       setAllNotifications(response?.data?.data);
+  //     }
+  //   } catch (err) {
+  //     addToast(
+  //       `O sistema de notificações não está disponível no momento. Tente novamente mais tarde.`,
+  //       { appearance: "error" },
+  //     );
+  //     console.error(err);
+  //   }
+  // };
 
   const handleOpenMenuCompanys = (event: any) => {
     setAnchorCompanysEl(event.currentTarget);
@@ -206,7 +207,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
               paddingBottom: "2px",
             }}
           >
-            <img src={logoImage} className="logo" alt="logo" />
+            <img src={production ? "https://core-front-prod.s3.amazonaws.com/logo_incicle.svg" : "https://core-frontend-develop.s3.sa-east-1.amazonaws.com/logo_incicle.svg"} className="logo" alt="logo" />
           </Link>
           <Stack spacing={0} direction="row" sx={{ alignItems: "center" }}>
             {[
@@ -222,27 +223,56 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                 text: "Projetos",
                 link: links.web?.project,
               },
-            ].map((anchor: any) => (
-              <Link
-                key={`${anchor.text}`}
-                href={`${anchor.link}`}
-                underline="none"
-                sx={{
-                  p: "6px 8px",
-                  color: "#747474",
-                  borderRadius: "3px",
-                  "&:hover": {
-                    background: "#f2f3f5",
-                  },
-                  "&:active": {
-                    fontWeight: 600,
-                    color: "#007fa1",
-                  },
-                }}
-              >
-                {anchor.text}
-              </Link>
-            ))}
+            ].map((anchor: any) => {
+              if (anchor.text === "Projetos") {
+                if (user.config.default_profile_type === "person") {
+                  return (
+                    <Link
+                      key={`${anchor.text}`}
+                      href={`${anchor.link}`}
+                      underline="none"
+                      sx={{
+                        p: "6px 8px",
+                        color: "#747474",
+                        borderRadius: "3px",
+                        "&:hover": {
+                          background: "#f2f3f5",
+                        },
+                        "&:active": {
+                          fontWeight: 600,
+                          color: "#007fa1",
+                        },
+                      }}
+                    >
+                      {anchor.text}
+                    </Link>
+                  );
+                }
+              } else {
+                return (
+                  <Link
+                    key={`${anchor.text}`}
+                    href={`${anchor.link}`}
+                    underline="none"
+                    sx={{
+                      p: "6px 8px",
+                      color: "#747474",
+                      borderRadius: "3px",
+                      "&:hover": {
+                        background: "#f2f3f5",
+                      },
+                      "&:active": {
+                        fontWeight: 600,
+                        color: "#007fa1",
+                      },
+                    }}
+                  >
+                    {anchor.text}
+                  </Link>
+                );
+              }
+              return <></>;
+            })}
           </Stack>
         </Grid>
 
@@ -426,7 +456,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
 
             {/* NOTIFICATIONS AREA */}
 
-            <IconButton
+            {/* <IconButton
               size="medium"
               sx={{ width: 35, height: 35 }}
               onClick={showNotifications}
@@ -434,7 +464,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
               <Badge color="primary" invisible={!hasNewNotifications} variant="dot">
                 <NotificationsIcon sx={{ width: 25, height: 25 }} />
               </Badge>
-            </IconButton>
+            </IconButton> */}
 
             <Notifications
               openNotifications={openNotifications}
