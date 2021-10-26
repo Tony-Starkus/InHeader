@@ -51,11 +51,19 @@ const renderText = (notification: any) => {
         </label>;
       break;
 
-    case "NEW_RECOMMENDATION_RECEIVED":
-      text =
-        <label>
-          <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> escreveu uma recomendação para você.
-        </label>;
+    // case "NEW_RECOMMENDATION_RECEIVED":
+    //   text =
+    //     <label>
+    //       <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> escreveu uma recomendação para você.
+    //     </label>;
+    //   break;
+
+    // case "NEW_RECOMMENDATION_REQUEST":
+    //   text =
+    //     <label>
+    //       <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> pediu uma recomendação para você.
+    //     </label>;
+    //   break;
 
   }
 
@@ -70,7 +78,7 @@ const renderText = (notification: any) => {
     </Typography>
   )
 }
-
+// @ts-ignore
 const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, profile, notificationItem }) => {
   const links = defineLinks(production);
   // @ts-ignore
@@ -162,17 +170,17 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
           </NotificationContainer>
         );
 
-      case notificationType.send_recommendation:
-        return (
-          <NotificationContainer
-            url={`${links.web.social}p/${profile.nickname}`}
-            notification={notificationItem}
-            api={api}
-            production={production}
-          >
-            {renderText(notificationItem)}
-          </NotificationContainer>
-        );
+      // case notificationType.send_recommendation:
+      //   return (
+      //     <NotificationContainer
+      //       url={`${links.web.social}p/${profile.nickname}`}
+      //       notification={notificationItem}
+      //       api={api}
+      //       production={production}
+      //     >
+      //       {renderText(notificationItem)}
+      //     </NotificationContainer>
+      //   );
 
       default:
         return (<></>);

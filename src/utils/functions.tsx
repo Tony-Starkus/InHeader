@@ -24,7 +24,7 @@ export const defineLinks = (production: boolean) => {
       },
       api: {
         social: "https://socialnetwork-adonis-stage.incicle.com/api/v1/",
-        notifications: "http://notifications-stage.incicle.com/api/v1/notifications/"
+        notifications: "https://notifications-stage.incicle.com/api/v1/notifications/"
       }
     }
 

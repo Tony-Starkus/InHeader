@@ -17,7 +17,7 @@ interface IProps {
 const markAsReaded = (e: any, notification: any, api: any, url: string, production: boolean) => {
   e.preventDefault();
   const link = defineLinks(production);
-  api.put(`${link.api.notifications}${notification._id}`).then((response: any) => {
+  api.patch(`${link.api.notifications}${notification._id}`).then((response: any) => {
     if (response.status === 204) {
       window.location.href = url;
     }
