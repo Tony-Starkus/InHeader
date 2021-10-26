@@ -31,15 +31,15 @@ const buildNotificationUrl = (notification: NotificationItem, production: boolea
     }
   };
 
-  if(notification.module === modules.project.name) { // PROJECT
+  if (notification.module === modules.project.name) { // PROJECT
 
-    if(notification.type === modules.project.types.activity) {
-      return`${links.web.project}`;
+    if (notification.type === modules.project.types.activity) {
+      return `${links.web.project}`;
     }
 
-  } else if(notification.module === modules.social_network.name) { // SOCIAL NETWORK
+  } else if (notification.module === modules.social_network.name) { // SOCIAL NETWORK
 
-    if(notification.type === modules.social_network.types.publication) {
+    if (notification.type === modules.social_network.types.publication) {
       return `${links.web.social}publication/${notification.common.publication_id}`;
     }
 

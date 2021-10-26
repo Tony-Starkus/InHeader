@@ -1,21 +1,56 @@
 import React from 'react';
 import {
-  Typography
+  MenuItem,
+  Stack,
+  Avatar,
 } from '@mui/material'
+import CircleIcon from "@mui/icons-material/Circle";
+import { defineLinks } from '../../utils/functions';
 
-export default class NotificationAbstract extends React.Component {
+interface IProps {
+  notification: any
+  url: string
+  api: any
+  production: boolean
+}
 
-  renderText(text: string) {
-    return(
-      <Typography
-          sx={{
-            fontSize: "13px",
-            width: "100%",
-          }}
-        >
-          {text}
-        </Typography>
-    );
-  }
+const markAsReaded = (e: any, notification: any, api: any, url: string, production: boolean) => {
+  e.preventDefault();
+  const link = defineLinks(production);
+  api.put(`${link.api.notifications}${notification._id}`).then((response: any) => {
+    if (response.status === 204) {
+      window.location.href = url;
+    }
+  }).catch((error: any) => {
+    console.log(error);
+    window.location.href = url;
+  })
+}
 
+export const NotificationContainer: React.FC<IProps> = ({ notification, url, api, production, children }) => {
+
+  return (
+    <MenuItem
+      style={{
+        whiteSpace: "normal",
+        paddingTop: "10px",
+        paddingBottom: "10px",
+      }}
+      component="a"
+      href={url}
+      onClick={(e: any) => markAsReaded(e, notification, api, url, production)}
+    >
+      <Stack direction="row" style={{ width: "100%" }} alignItems="center">
+        <Avatar src={notification.sender.avatar_url} />
+        <Stack direction="column" spacing={1} style={{ width: "100%" }}>
+          {children}
+        </Stack>
+        {!notification.read && <CircleIcon sx={{ color: "#00adcb" }} />}
+      </Stack>
+    </MenuItem>
+  );
+}
+
+export const preventRedirect = (e: any) => {
+  e.preventDefault();
 }

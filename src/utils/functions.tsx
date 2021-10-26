@@ -1,12 +1,16 @@
 
 export const defineLinks = (production: boolean) => {
-  if(production) {
-    
+  if (production) {
+
     return {
       web: {
         social: "https://social-network-frontend.incicle.com/",
         schedule: "https://schedule.incicle.com/",
         project: "https://projects.incicle.com/",
+      },
+      api: {
+        social: "https://socialnetwork-adonis.incicle.com/api/v1/",
+        notifications: "https://notifications.incicle.com/api/v1/notifications/"
       }
     }
 
@@ -17,6 +21,10 @@ export const defineLinks = (production: boolean) => {
         social: "https://social-network-frontend-stage.incicle.com/",
         schedule: "https://schedule-stage.incicle.com/",
         project: "https://projects-stage.incicle.com/",
+      },
+      api: {
+        social: "https://socialnetwork-adonis-stage.incicle.com/api/v1/",
+        notifications: "http://notifications-stage.incicle.com/api/v1/notifications/"
       }
     }
 

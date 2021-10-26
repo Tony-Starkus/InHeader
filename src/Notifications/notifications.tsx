@@ -9,6 +9,7 @@ interface props {
   setAnchorNotifications: any;
   data: any;
   api: any
+  profile: any
   production: boolean
 }
 
@@ -18,36 +19,9 @@ const Notifications: React.FC<props> = ({
   setAnchorNotifications,
   data,
   api,
+  profile,
   production
 }) => {
-
-  const notificationData = [
-    { // PEDIDO DE AMIZADE
-      common: {
-        accept: null
-      },
-      sender: {
-        avatar_url: "https://socialnetwork-adonis-stage.incicle.com/api/v1/files/9xbsgmqim0gc76m0vve5c_1633359671752.jpeg"
-      },
-      content: "Fulano te enviou um pedido de amizade",
-      module: "social_network",
-      read: false,
-      type: "friendship_request"
-    },
-
-    { // PEDIDO DE AMIZADE
-      common: {
-        accept: true
-      },
-      sender: {
-        avatar_url: "https://socialnetwork-adonis-stage.incicle.com/api/v1/files/9xbsgmqim0gc76m0vve5c_1633359671752.jpeg"
-      },
-      content: "Fulano de tal te enviou um pedido de amizade",
-      module: "social_network",
-      read: false,
-      type: "friendship_request"
-    }
-  ]
 
   return (
     <Menu
@@ -89,7 +63,7 @@ const Notifications: React.FC<props> = ({
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      {data && notificationData.map((item: any) => <NotificationItem item={item} api={api} production={production} />)}
+      {data && data.map((item: any) => <NotificationItem item={item} api={api} profile={profile} production={production} />)}
     </Menu>
   );
 };
