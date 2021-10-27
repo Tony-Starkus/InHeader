@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
 import { defineLinks } from "../../utils/functions";
-import { NotificationContainer } from './NotificationAbstract';
+import { NotificationContainer, NotificationContentText } from './NotificationAbstract';
 
 interface IProps {
   production: boolean
@@ -11,73 +10,14 @@ interface IProps {
 }
 
 const notificationType = {
-  activity_in_publication: "activity_in_publication",
-  friendship_request: "friendship_request",
-  publication: "publication",
-  send_recommendation: "send_recommendation"
+  PUBLICATION_TYPE_LIKE: "PUBLICATION_TYPE_LIKE",
+  PUBLICATION_TYPE_COMMENT: "PUBLICATION_TYPE_COMMENT",
+  PUBLICATION_TYPE_SHARE: "PUBLICATION_TYPE_SHARE",
+  NEW_FRIEND_REQUEST: "NEW_FRIEND_REQUEST",
+  NEW_RECOMMENDATION_REQUEST: "NEW_RECOMMENDATION_REQUEST",
+  NEW_RECOMMENDATION_RECEIVED: "NEW_RECOMMENDATION_RECEIVED"
 }
 
-const renderText = (notification: any) => {
-
-  let text;
-
-  switch (notification.content) {
-
-    case "NEW_FRIEND_REQUEST":
-      text =
-        <label>
-          <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> te enviou uma solicitação de amizade.
-        </label>;
-      break;
-
-    case "PUBLICATION_TYPE_LIKE":
-      text =
-        <label>
-          <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> curtiu sua publicação.
-        </label>;
-      break;
-
-    case "PUBLICATION_TYPE_COMMENT":
-      text =
-        <label>
-          <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> comentou na sua publicação.
-        </label>;
-      break;
-
-    case "PUBLICATION_TYPE_SHARE":
-      text =
-        <label>
-          <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> compartilhou  sua publicação.
-        </label>;
-      break;
-
-    // case "NEW_RECOMMENDATION_RECEIVED":
-    //   text =
-    //     <label>
-    //       <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> escreveu uma recomendação para você.
-    //     </label>;
-    //   break;
-
-    // case "NEW_RECOMMENDATION_REQUEST":
-    //   text =
-    //     <label>
-    //       <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> pediu uma recomendação para você.
-    //     </label>;
-    //   break;
-
-  }
-
-  return (
-    <Typography
-      sx={{
-        fontSize: "13px",
-        width: "100%",
-      }}
-    >
-      {text}
-    </Typography>
-  )
-}
 // @ts-ignore
 const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, profile, notificationItem }) => {
   const links = defineLinks(production);
@@ -130,7 +70,7 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
 
     switch (notificationItem.type) {
 
-      case notificationType.friendship_request:
+      case notificationType.NEW_FRIEND_REQUEST:
         return (
           <NotificationContainer
             url={`${links.web.social}friends`}
@@ -138,7 +78,11 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
             api={api}
             production={production}
           >
-            {renderText(notificationItem)}
+            <NotificationContentText>
+              <label>
+                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> te enviou uma solicitação de amizade.
+              </label>
+            </NotificationContentText>
             {/* <Stack direction="row" spacing={1}>
               {notification.common.accept === null &&
                 <>
@@ -158,7 +102,9 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
           </NotificationContainer>
         );
 
-      case notificationType.publication:
+      case notificationType.PUBLICATION_TYPE_LIKE:
+      case notificationType.PUBLICATION_TYPE_COMMENT:
+      case notificationType.PUBLICATION_TYPE_SHARE:
         return (
           <NotificationContainer
             url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
@@ -166,21 +112,36 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
             api={api}
             production={production}
           >
-            {renderText(notificationItem)}
+            <NotificationContentText>
+              <label>
+                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
+                {notificationItem.type === notificationType.PUBLICATION_TYPE_LIKE && ' curtiu a '}
+                {notificationItem.type === notificationType.PUBLICATION_TYPE_COMMENT && ' comentou na '}
+                {notificationItem.type === notificationType.PUBLICATION_TYPE_SHARE && ' compartilhou '}
+                sua publicação
+              </label>
+            </NotificationContentText>
           </NotificationContainer>
         );
 
-      // case notificationType.send_recommendation:
-      //   return (
-      //     <NotificationContainer
-      //       url={`${links.web.social}p/${profile.nickname}`}
-      //       notification={notificationItem}
-      //       api={api}
-      //       production={production}
-      //     >
-      //       {renderText(notificationItem)}
-      //     </NotificationContainer>
-      //   );
+      case notificationType.NEW_RECOMMENDATION_REQUEST:
+      case notificationType.NEW_RECOMMENDATION_RECEIVED:
+        return (
+          <NotificationContainer
+            url={`${links.web.social}p/${profile.nickname}`}
+            notification={notificationItem}
+            api={api}
+            production={production}
+          >
+            <NotificationContentText>
+              <label>
+                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
+                {notificationItem.type === notificationType.NEW_RECOMMENDATION_REQUEST && ' solicitou uma recomendação de você'}
+                {notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED && ' enviou uma recomendação para você'}
+              </label>
+            </NotificationContentText>
+          </NotificationContainer>
+        );
 
       default:
         return (<></>);
