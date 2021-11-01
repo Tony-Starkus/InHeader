@@ -318,6 +318,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                   mt: 1.5,
                   "& .MuiAvatar-root": {
                     width: 32,
+                    height: 32,
                     ml: -0.5,
                     mr: 1,
                   },
@@ -504,6 +505,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                   mt: 1.5,
                   "& .MuiAvatar-root": {
                     width: 32,
+                    height: 32,
                     ml: -0.5,
                     mr: 1,
                   },

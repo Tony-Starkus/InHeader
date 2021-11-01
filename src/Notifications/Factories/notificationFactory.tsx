@@ -1,6 +1,7 @@
 import React from 'react';
 import SocialNetworkNotificationFactory from "./SocialNetwork";
 import FeedbackNotificationFactory from './Feedback';
+import ScheduleNotificationFactory from './Schedule';
 import { incicleModules } from "../../utils/types";
 
 function createNotificationFactory(item: any, api: any, profile: any, production: boolean) {
@@ -10,6 +11,9 @@ function createNotificationFactory(item: any, api: any, profile: any, production
 
     case incicleModules.feedback:
       return <FeedbackNotificationFactory api={api} production={production} notificationItem={item} />
+
+    case incicleModules.schedule:
+      return <ScheduleNotificationFactory api={api} production={production} notificationItem={item} />
 
     default:
       break;

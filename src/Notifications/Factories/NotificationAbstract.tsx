@@ -62,6 +62,7 @@ export const NotificationContentText: React.FC = ({ children }) => {
       sx={{
         fontSize: "13px",
         width: "100%",
+        '*': { cursor: 'pointer' }
       }}
     >
       {children}
