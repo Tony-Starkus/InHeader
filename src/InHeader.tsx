@@ -294,7 +294,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                 clickable
                 avatar={companiesAvatar()}
                 label={
-                  <span style={{ fontSize: "0.5rem !important" }}>
+                  <span style={{ fontSize: "13px" }}>
                     {selectedCompany.name}
                   </span>
                 }
