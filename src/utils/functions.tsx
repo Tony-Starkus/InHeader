@@ -4,7 +4,7 @@ export const defineLinks = (production: boolean) => {
 
     return {
       web: {
-        social: "https://social-network-frontend.incicle.com/",
+        social: "https://social.incicle.com/",
         schedule: "https://schedule.incicle.com/",
         project: "https://projects.incicle.com/",
       },
