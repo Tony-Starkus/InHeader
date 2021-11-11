@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Grid,
   IconButton,
   Avatar,
   Badge,
@@ -13,21 +12,31 @@ import {
   Link,
   Chip,
   Box,
+  ClickAwayListener,
+  Icon,
 } from "@mui/material";
 import { useToasts } from "react-toast-notifications";
 import { Settings } from "@mui/icons-material";
 import ExitToApp from "@mui/icons-material/ExitToApp";
+import AppsIcon from "@mui/icons-material/Apps";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
 import Autocomplete from "@mui/material/Autocomplete";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import WorkIcon from "@mui/icons-material/Work";
 import Notifications from "./Notifications/notifications";
-import { getNotifications } from './Notifications/functions'
+import { getNotifications } from "./Notifications/functions";
 import { HeaderInStyle } from "./styles";
 
-import { defineLinks } from './utils/functions'
+import { defineLinks } from "./utils/functions";
+
+import ProjectsIcon from "./assets/Projetos.svg";
+import SocialNetworkIcon from "./assets/Rede-Social.svg";
+import FeedbacksIcon from "./assets/Feedback.svg";
+import ScheduleIcon from "./assets/Agenda.svg";
+import CompetenceIcon from "./assets/Avaliação_por_Competencia.svg";
 
 interface props {
   user: any;
@@ -39,9 +48,33 @@ interface props {
 }
 
 export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api, signOut, production }) => {
+  const baseUrl = production
+    ? "https://socialnetwork-adonis.incicle.com/api/v1"
+    : "https://socialnetwork-adonis-stage.incicle.com/api/v1";
+  const baseNotifications = production
+    ? "https://notifications.incicle.com/api/v1/"
+    : "https://notifications-stage.incicle.com/api/v1/";
 
-  const baseUrl = production ? "https://socialnetwork-adonis.incicle.com/api/v1" : "https://socialnetwork-adonis-stage.incicle.com/api/v1";
-  const baseNotifications = production ? "https://notifications.incicle.com/api/v1/" : "https://notifications-stage.incicle.com/api/v1/";
+  useEffect(() => {
+    const contentSideBarElement = document.querySelector(".contentSidebar > div") as any;
+
+    const handleResize = () => {
+      if (window.innerWidth < 800) {
+        contentSideBarElement!.style.display = "none";
+        return;
+      }
+
+      contentSideBarElement!.style.display = "initial";
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const { addToast } = useToasts();
   const [myProfile, setMyProfile] = useState({}) as any;
@@ -62,17 +95,19 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   const openNotifications = Boolean(anchorNotifications);
 
   const [allNotifications, setAllNotifications] = useState([]) as any;
-  const [hasNewNotifications, setHasNewNotifications] = useState(false)
+  const [hasNewNotifications, setHasNewNotifications] = useState(false);
+  const [inputBoxClassName, setInputBoxClassName] = useState("");
+  const [showModules, setShowModules] = useState(false);
 
   useEffect(() => {
     setAllNotifications([]);
-  }, [])
+  }, []);
 
   useEffect(() => {
     getNotifications(api, baseNotifications, 1, 10).then((response: any) => {
-      setAllNotifications(response.data)
+      setAllNotifications(response.data);
       if (response.unread > 0) {
-        setHasNewNotifications(true)
+        setHasNewNotifications(true);
       }
     });
   }, []);
@@ -81,15 +116,11 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
     if (user.config.default_profile_type === "person") {
       setAccountType("person");
       if (user.companies.length > 0) {
-        const companysIds = user.companies.map(
-          (pos: any) => pos.id,
-        ) as string[];
+        const companysIds = user.companies.map((pos: any) => pos.id) as string[];
 
         if (companySelected && companysIds.includes(companySelected)) {
           const localCompanySelected =
-            user.companies[
-            user.companies.findIndex((pos: any) => pos.id === companySelected)
-            ];
+            user.companies[user.companies.findIndex((pos: any) => pos.id === companySelected)];
           setSelectedCompany(localCompanySelected);
         } else {
           setSelectedCompany(user.companies[0]);
@@ -104,9 +135,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   const searchFunction = async (nickname: string) => {
     if (nickname.trim().length >= 3) {
       try {
-        const response = await api.get(
-          `${baseUrl}/profiles/search/all?search=${nickname}`,
-        );
+        const response = await api.get(`${baseUrl}/profiles/search/all?search=${nickname}`);
         if (response?.status === 200) {
           setResultPerson(response?.data.data);
           setHasResult(true);
@@ -138,10 +167,9 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
         setAllNotifications(response?.data?.data);
       }
     } catch (err) {
-      addToast(
-        `O sistema de notificações não está disponível no momento. Tente novamente mais tarde.`,
-        { appearance: "error" },
-      );
+      addToast(`O sistema de notificações não está disponível no momento. Tente novamente mais tarde.`, {
+        appearance: "error",
+      });
       console.error(err);
     }
   };
@@ -194,10 +222,22 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
     );
   };
 
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth > 1200 && inputBoxClassName.length) setInputBoxClassName("");
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
-    <HeaderInStyle>
-      <Grid container>
-        <Grid item xs={6} sx={{ alignItems: "center", display: "flex" }}>
+    <HeaderInStyle className="incicleheader">
+      <section className="incicleheader-content">
+        <nav style={{ alignItems: "center", display: "flex" }}>
           <Link
             href={`${links.web?.social}`}
             sx={{
@@ -208,29 +248,61 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
               paddingBottom: "2px",
             }}
           >
-            <img src={production ? "https://core-front-prod.s3.amazonaws.com/logo_incicle.svg" : "https://core-frontend-develop.s3.sa-east-1.amazonaws.com/logo_incicle.svg"} className="logo" alt="logo" />
-          </Link>
-          <Stack spacing={0} direction="row" sx={{ alignItems: "center" }}>
-            {[
-              {
-                text: "Feed",
-                link: links.web?.social,
-              },
-              {
-                text: "Agenda",
-                link: links.web?.schedule,
-              },
-              {
-                text: "Projetos",
-                link: links.web?.project,
-              },
-              {
-                text: "Feedbacks",
-                link: `${links.web?.social}feedback`
+            <img
+              src={
+                production
+                  ? "https://core-front-prod.s3.amazonaws.com/logo_incicle.svg"
+                  : "https://core-frontend-develop.s3.sa-east-1.amazonaws.com/logo_incicle.svg"
               }
-            ].map((anchor: any) => {
-              if (anchor.text === "Projetos") {
-                if (user.config.default_profile_type === "person") {
+              className="logo"
+              alt="logo"
+            />
+          </Link>
+          <Stack spacing={0} direction="row" className="incicleheader-modules" sx={{ alignItems: "center" }}>
+            <div className={`incicleheader-modules-content original ${showModules ? "view" : ""}`}>
+              {[
+                {
+                  text: "Feed",
+                  link: links.web?.social,
+                },
+                {
+                  text: "Agenda",
+                  link: links.web?.schedule,
+                },
+                {
+                  text: "Projetos",
+                  link: links.web?.project,
+                },
+                {
+                  text: "Feedbacks",
+                  link: `${links.web?.social}feedback`,
+                },
+              ].map((anchor: any) => {
+                if (anchor.text === "Projetos") {
+                  if (user.config.default_profile_type === "person") {
+                    return (
+                      <Link
+                        key={`${anchor.text}`}
+                        href={`${anchor.link}`}
+                        underline="none"
+                        sx={{
+                          p: "6px 8px",
+                          color: "#747474",
+                          borderRadius: "3px",
+                          "&:hover": {
+                            background: "#f2f3f5",
+                          },
+                          "&:active": {
+                            fontWeight: 600,
+                            color: "#007fa1",
+                          },
+                        }}
+                      >
+                        {anchor.text}
+                      </Link>
+                    );
+                  }
+                } else {
                   return (
                     <Link
                       key={`${anchor.text}`}
@@ -253,119 +325,209 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     </Link>
                   );
                 }
-              } else {
-                return (
-                  <Link
-                    key={`${anchor.text}`}
-                    href={`${anchor.link}`}
-                    underline="none"
-                    sx={{
-                      p: "6px 8px",
-                      color: "#747474",
-                      borderRadius: "3px",
-                      "&:hover": {
-                        background: "#f2f3f5",
-                      },
-                      "&:active": {
-                        fontWeight: 600,
-                        color: "#007fa1",
-                      },
-                    }}
-                  >
-                    {anchor.text}
-                  </Link>
-                );
-              }
-              return <></>;
-            })}
-          </Stack>
-        </Grid>
+                return <></>;
+              })}
+            </div>
 
-        <Grid item xs={6}>
-          <Stack
-            spacing={1}
-            direction="row"
-            sx={{ justifyContent: "flex-end", alignItems: "center" }}
-          >
-            {companies.length > 0 && accountType === "person" && (
-              <Chip
-                onClick={handleOpenMenuCompanys}
-                size="small"
-                clickable
-                avatar={companiesAvatar()}
-                label={
-                  <span style={{ fontSize: "13px" }}>
-                    {selectedCompany.name}
-                  </span>
-                }
-                onDelete={handleOpenMenuCompanys}
-                deleteIcon={<ArrowDropDownIcon />}
-                variant="outlined"
-                sx={{ padding: "2px !important", height: "32px" }}
-              />
+            <label className="incicleheader-modules-label" htmlFor="incicleheader-modules-checkbox">
+              <IconButton onClick={() => setShowModules(oldShowModules => !oldShowModules)}>
+                <AppsIcon sx={{ width: "24px" }} />
+              </IconButton>
+            </label>
+            {showModules && (
+              <ClickAwayListener {...{ onClickAway: () => showModules && setShowModules(false) }}>
+                <div className={`incicleheader-modules-content toggle ${showModules ? "view" : ""}`}>
+                  {[
+                    {
+                      text: "Feed",
+                      link: links.web?.social,
+                      icon: SocialNetworkIcon,
+                    },
+                    {
+                      text: "Agenda",
+                      link: links.web?.schedule,
+                      icon: ScheduleIcon,
+                    },
+                    {
+                      text: "Projetos",
+                      link: links.web?.project,
+                      icon: ProjectsIcon,
+                    },
+                    {
+                      text: "Feedbacks",
+                      link: `${links.web?.social}feedback`,
+                      icon: FeedbacksIcon,
+                    },
+                    {
+                      text: "Gestão po competência",
+                      link: links.web.competency,
+                      icon: CompetenceIcon,
+                    },
+                  ].map((anchor: any) => {
+                    if (anchor.text === "Projetos") {
+                      if (user.config.default_profile_type === "person") {
+                        return (
+                          <IconButton
+                            sx={{
+                              justifyContent: "flex-start",
+                              height: "max-content",
+                              borderRadius: "0 !important",
+                              fontSize: "18px",
+                            }}
+                          >
+                            <Icon>
+                              <img src={anchor.icon} />
+                            </Icon>
+                            <Link
+                              key={`${anchor.text}`}
+                              href={`${anchor.link}`}
+                              underline="none"
+                              sx={{
+                                p: "6px 8px",
+                                color: "#747474",
+                                borderRadius: "3px",
+                                "&:hover": {
+                                  background: "#f2f3f5",
+                                },
+                                "&:active": {
+                                  fontWeight: 600,
+                                  color: "#007fa1",
+                                },
+                              }}
+                            >
+                              {anchor.text}
+                            </Link>
+                          </IconButton>
+                        );
+                      }
+                    } else {
+                      return (
+                        <IconButton
+                          sx={{
+                            justifyContent: "flex-start",
+                            height: "max-content",
+                            borderRadius: "0 !important",
+                            fontSize: "18px",
+                          }}
+                        >
+                          <Icon>
+                            <img src={anchor.icon} alt={anchor.text} />
+                          </Icon>
+                          <Link
+                            key={`${anchor.text}`}
+                            href={`${anchor.link}`}
+                            underline="none"
+                            sx={{
+                              p: "6px 8px",
+                              color: "#747474",
+                              borderRadius: "3px",
+                              "&:hover": {
+                                background: "#f2f3f5",
+                              },
+                              "&:active": {
+                                fontWeight: 600,
+                                color: "#007fa1",
+                              },
+                            }}
+                          >
+                            {anchor.text}
+                          </Link>
+                        </IconButton>
+                      );
+                    }
+                    return <></>;
+                  })}
+                </div>
+              </ClickAwayListener>
             )}
+          </Stack>
+        </nav>
+      </section>
 
-            <Menu
-              anchorEl={anchorCompanysEl}
-              open={openMenuCompanys}
-              onClose={handleCloseMenuCompanys}
-              onClick={handleCloseMenuCompanys}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
+      <section className="incicleheader-content flex-end">
+        <nav>
+          <Stack spacing={1} direction="row" sx={{ justifyContent: "flex-end", alignItems: "center" }}>
+            <div className="incicleheader-companies">
+              {companies.length > 0 && accountType === "person" && (
+                <Chip
+                  onClick={handleOpenMenuCompanys}
+                  size="small"
+                  clickable
+                  avatar={companiesAvatar()}
+                  label={<span style={{ fontSize: "13px" }}>{selectedCompany.name}</span>}
+                  onDelete={handleOpenMenuCompanys}
+                  deleteIcon={<ArrowDropDownIcon />}
+                  variant="outlined"
+                  sx={{ padding: "2px !important", height: "32px" }}
+                />
+              )}
+              <Menu
+                anchorEl={anchorCompanysEl}
+                open={openMenuCompanys}
+                onClose={handleCloseMenuCompanys}
+                onClick={handleCloseMenuCompanys}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
 
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                    "& li, & a": {
+                      fontFamily: '"Open Sans", sans-serif',
+                      fontSize: "12px",
+                    },
                   },
-                  "& li, & a": {
-                    fontFamily: '"Open Sans", sans-serif',
-                    fontSize: "12px",
-                  },
-                },
-              }}
-              transformOrigin={{ horizontal: "right", vertical: "top" }}
-              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+              >
+                {companies.map((company, index) => (
+                  <MenuItem key={`${company.id}`} component="li" onClick={() => changeChipContent(index)}>
+                    <Avatar alt={company.name}>
+                      <WorkIcon />
+                    </Avatar>
+                    <span style={{ padding: "0 !important" }}>{company.name}</span>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </div>
+            <Paper
+              elevation={0}
+              className="incicleheader-inputbutton"
+              sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
             >
-              {companies.map((company, index) => (
-                <MenuItem
-                  key={`${company.id}`}
-                  component="li"
-                  onClick={() => changeChipContent(index)}
-                >
-                  <Avatar alt={company.name}>
-                    <WorkIcon />
-                  </Avatar>
-                  <span style={{ padding: "0 !important" }}>
-                    {company.name}
-                  </span>
-                </MenuItem>
-              ))}
-            </Menu>
+              <IconButton onClick={() => setInputBoxClassName("view")}>
+                <SearchIcon sx={{ width: "24px" }} />
+              </IconButton>
+            </Paper>
             <Paper
               component="form"
+              className={`incicleheader-inputbox ${inputBoxClassName}`}
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                width: 250,
+                width: "100%",
+                // width: 250,
                 padding: "2px",
                 border: "none",
                 background: "#f2f3f5",
@@ -388,15 +550,25 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                   <Box
                     ref={params.InputProps.ref}
                     sx={{
+                      display: "flex",
+                      alignItems: "center",
                       marginLeft: "12px",
                       "& input::placeholder": {
                         color: "#ddd !important",
                       },
                     }}
                   >
+                    {inputBoxClassName && (
+                      <>
+                        <IconButton onClick={() => setInputBoxClassName("")}>
+                          <CloseIcon sx={{ width: "16px", height: "16px" }} />
+                        </IconButton>
+                      </>
+                    )}
                     <input
                       type="text"
                       {...params.inputProps}
+                      className="incicleheader-inputsearch"
                       placeholder="Encontre alguém na InCicle"
                       style={{
                         fontSize: "14px",
@@ -433,9 +605,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                           {option.name}
                         </span>
                         {option.type === "company" && (
-                          <span style={{ fontSize: "11px", marginTop: "-2px" }}>
-                            Perfil de empresa
-                          </span>
+                          <span style={{ fontSize: "11px", marginTop: "-2px" }}>Perfil de empresa</span>
                         )}
                       </div>
                     </a>
@@ -448,29 +618,23 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
               />
 
               <IconButton type="submit" sx={{ p: "6px" }} aria-label="search">
-                <SearchIcon sx={{ width: "16px" }} />
+                <SearchIcon sx={{ width: "24px", color: "#747474 !important" }} />
               </IconButton>
             </Paper>
 
-            <IconButton
-              size="medium"
-              sx={{ width: 35, height: 35 }}
-              href={`${links.web?.social}friends`}
-            >
+            <IconButton size="medium" sx={{ width: 35, height: 35 }} href={`${links.web?.social}friends`}>
               <PeopleAltIcon sx={{ width: 25, height: 25 }} />
             </IconButton>
 
             {/* NOTIFICATIONS AREA */}
 
-            {<IconButton
-              size="medium"
-              sx={{ width: 35, height: 35 }}
-              onClick={showNotifications}
-            >
-              <Badge color="primary" invisible={!hasNewNotifications} variant="dot">
-                <NotificationsIcon sx={{ width: 25, height: 25 }} />
-              </Badge>
-            </IconButton>}
+            {
+              <IconButton size="medium" sx={{ width: 35, height: 35 }} onClick={showNotifications}>
+                <Badge color="primary" invisible={!hasNewNotifications} variant="dot">
+                  <NotificationsIcon sx={{ width: 25, height: 25 }} />
+                </Badge>
+              </IconButton>
+            }
 
             <Notifications
               openNotifications={openNotifications}
@@ -485,6 +649,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
             {/* NOTIFICATIONS AREA */}
 
             <IconButton
+              className="incicleheader-avatar"
               onClick={handleOpenMenuProfile}
               size="small"
               style={{ marginRight: 15 }}
@@ -547,9 +712,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     marginRight: 15,
                   }}
                 />
-                {myProfile.first_name
-                  ? `${myProfile.first_name} ${myProfile.last_name}`
-                  : myProfile.name}
+                {myProfile.first_name ? `${myProfile.first_name} ${myProfile.last_name}` : myProfile.name}
               </MenuItem>
               <Divider />
               <MenuItem component="a" href="/settings">
@@ -566,8 +729,8 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
               </MenuItem>
             </Menu>
           </Stack>
-        </Grid>
-      </Grid>
+        </nav>
+      </section>
     </HeaderInStyle>
   );
 };

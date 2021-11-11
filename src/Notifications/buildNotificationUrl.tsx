@@ -25,7 +25,7 @@ const buildNotificationUrl = (notification: NotificationItem, production: boolea
 
   const links = {
     web: {
-      social: production ? "https://social.incicle.com/" : "https://social-network-frontend-stage.incicle.com/",
+      social: production ? "https://social-network-frontend.incicle.com/" : "https://social-network-frontend-stage.incicle.com/",
       schedule: production ? "https://schedule.incicle.com/" : "https://schedule-stage.incicle.com/",
       project: production ? "https://projects.incicle.com/" : "https://projects-stage.incicle.com/",
     }
