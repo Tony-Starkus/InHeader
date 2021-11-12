@@ -63,7 +63,7 @@ export const HeaderInStyle = styled.header`
       display: flex !important;
       width: 100%;
       height: 100%;
-      margin: 4px;
+      margin: 0;
       padding: 4px 0px;
       box-sizing: border-box;
     }
@@ -123,11 +123,19 @@ export const HeaderInStyle = styled.header`
 
   @media only screen and (max-width: 600px) {
     .logo {
-      width: 120px !important;
+      width: 100px !important;
     }
 
     .incicleheader-avatar {
       margin: 0 !important;
+
+      &,
+      .MuiAvatar-root {
+        width: 28px;
+        height: 28px;
+        /* padding: 8px; */
+        margin: 0 8px !important;
+      }
     }
   }
 `;

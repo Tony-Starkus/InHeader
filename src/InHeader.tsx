@@ -32,12 +32,6 @@ import { HeaderInStyle } from "./styles";
 
 import { defineLinks } from "./utils/functions";
 
-import ProjectsIcon from "./assets/Projetos.svg";
-import SocialNetworkIcon from "./assets/Rede-Social.svg";
-import FeedbacksIcon from "./assets/Feedback.svg";
-import ScheduleIcon from "./assets/Agenda.svg";
-import CompetenceIcon from "./assets/Avaliação_por_Competencia.svg";
-
 interface props {
   user: any;
   profiles: any;
@@ -331,7 +325,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
 
             <label className="incicleheader-modules-label" htmlFor="incicleheader-modules-checkbox">
               <IconButton onClick={() => setShowModules(oldShowModules => !oldShowModules)}>
-                <AppsIcon sx={{ width: "24px" }} />
+                <AppsIcon sx={{ width: "24px !important", height: "24px !important" }} />
               </IconButton>
             </label>
             {showModules && (
@@ -341,29 +335,32 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     {
                       text: "Feed",
                       link: links.web?.social,
-                      icon: SocialNetworkIcon,
+                      icon: "https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg",
                     },
                     {
                       text: "Agenda",
                       link: links.web?.schedule,
-                      icon: ScheduleIcon,
+                      icon: "https://social.incicle.com/static/media/IconSchedule.9195d460.svg",
                     },
                     {
                       text: "Projetos",
                       link: links.web?.project,
-                      icon: ProjectsIcon,
+                      icon: "https://social.incicle.com/static/media/IconProjects.72b93d23.svg",
                     },
                     {
                       text: "Feedbacks",
                       link: `${links.web?.social}feedback`,
-                      icon: FeedbacksIcon,
+                      icon: "https://social.incicle.com/static/media/feedback-icon.5128afb5.svg",
                     },
                     {
                       text: "Gestão po competência",
-                      link: links.web.competency,
-                      icon: CompetenceIcon,
+                      link:
+                        user.config.default_profile_type === "person"
+                          ? `${links.web.competency}/user_view`
+                          : links.web.competency,
+                      icon: "https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg",
                     },
-                  ].map((anchor: any) => {
+                  ].map(anchor => {
                     if (anchor.text === "Projetos") {
                       if (user.config.default_profile_type === "person") {
                         return (
@@ -376,7 +373,11 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                             }}
                           >
                             <Icon>
-                              <img src={anchor.icon} />
+                              <img
+                                src={anchor.icon}
+                                alt={anchor.text}
+                                style={{ width: "24px !important", height: "24px !important" }}
+                              />
                             </Icon>
                             <Link
                               key={`${anchor.text}`}
@@ -411,7 +412,11 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                           }}
                         >
                           <Icon>
-                            <img src={anchor.icon} alt={anchor.text} />
+                            <img
+                              src={anchor.icon}
+                              alt={anchor.text}
+                              style={{ width: "24px !important", height: "24px !important" }}
+                            />
                           </Icon>
                           <Link
                             key={`${anchor.text}`}
@@ -516,7 +521,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
               sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
             >
               <IconButton onClick={() => setInputBoxClassName("view")}>
-                <SearchIcon sx={{ width: "24px" }} />
+                <SearchIcon sx={{ width: "24px !important", height: "24px !important" }} />
               </IconButton>
             </Paper>
             <Paper
@@ -561,7 +566,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     {inputBoxClassName && (
                       <>
                         <IconButton onClick={() => setInputBoxClassName("")}>
-                          <CloseIcon sx={{ width: "16px", height: "16px" }} />
+                          <CloseIcon sx={{ width: "16px !important", height: "16px !important" }} />
                         </IconButton>
                       </>
                     )}
@@ -618,7 +623,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
               />
 
               <IconButton type="submit" sx={{ p: "6px" }} aria-label="search">
-                <SearchIcon sx={{ width: "24px", color: "#747474 !important" }} />
+                <SearchIcon sx={{ width: "24px !important", height: "24px !important", color: "#747474 !important" }} />
               </IconButton>
             </Paper>
 
