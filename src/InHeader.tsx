@@ -704,7 +704,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
             >
               <MenuItem
                 component="a"
-                href={`/p/${myProfile.nickname}`}
+                href={`${links.web.social}p/${myProfile.nickname}`}
                 sx={{
                   width: "initial !important",
                   textTransform: "capitalize",
@@ -721,7 +721,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                 {myProfile.first_name ? `${myProfile.first_name} ${myProfile.last_name}` : myProfile.name}
               </MenuItem>
               <Divider />
-              <MenuItem component="a" href="/settings">
+              <MenuItem component="a" href={`${links.web.social}settings`}>
                 <ListItemIcon>
                   <Settings fontSize="small" />
                 </ListItemIcon>
