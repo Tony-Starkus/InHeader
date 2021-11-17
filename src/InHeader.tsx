@@ -31,6 +31,7 @@ import { getNotifications } from "./Notifications/functions";
 import { HeaderInStyle } from "./styles";
 
 import { defineLinks } from "./utils/functions";
+import maxLetters from "./utils/maxLettes";
 
 interface props {
   user: any;
@@ -353,7 +354,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                       icon: "https://social.incicle.com/static/media/feedback-icon.5128afb5.svg",
                     },
                     {
-                      text: "Gestão po competência",
+                      text: "Gestão por competência",
                       link:
                         user.config.default_profile_type === "person"
                           ? `${links.web.competency}/user_view`
@@ -459,7 +460,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                   size="small"
                   clickable
                   avatar={companiesAvatar()}
-                  label={<span style={{ fontSize: "13px" }}>{selectedCompany.name}</span>}
+                  label={<span style={{ fontSize: "13px" }}>{maxLetters(selectedCompany.name, 200)}</span>}
                   onDelete={handleOpenMenuCompanys}
                   deleteIcon={<ArrowDropDownIcon />}
                   variant="outlined"
