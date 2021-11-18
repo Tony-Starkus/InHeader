@@ -97,7 +97,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   }, []);
 
   useEffect(() => {
-    setMyProfile(profiles)
     getNotifications(api, baseNotifications, 1, 10).then((response: any) => {
       setAllNotifications(response.data);
       if (response.unread > 0) {
@@ -105,6 +104,10 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
       }
     });
   }, []);
+
+  useEffect(() => {
+    setMyProfile(profiles)
+  }, [profiles]);
 
   useEffect(() => {
     if (myProfile.type === "PERSON") {
@@ -727,3 +730,5 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
     </HeaderInStyle>
   );
 };
+
+
