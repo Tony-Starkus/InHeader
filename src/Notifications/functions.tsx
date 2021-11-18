@@ -1,8 +1,12 @@
 
 export const getNotifications: any = async (
+  // @ts-ignore-next-line
   api: any,
+  // @ts-ignore-next-line
   baseUrlNotifications: string,
-  page: any,
+  // @ts-ignore-next-line
+
+// @ts-ignore-next-line  page: any,
   size: any,
 ) => {
   // const response = await api.get(

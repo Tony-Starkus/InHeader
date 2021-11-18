@@ -15,7 +15,6 @@ import {
   ClickAwayListener,
   Icon,
 } from "@mui/material";
-import { useToasts } from "react-toast-notifications";
 import { Settings } from "@mui/icons-material";
 import ExitToApp from "@mui/icons-material/ExitToApp";
 import AppsIcon from "@mui/icons-material/Apps";
@@ -43,9 +42,9 @@ interface props {
 }
 
 export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api, signOut, production }) => {
-  const baseUrl = production
-    ? "https://socialnetwork-adonis.incicle.com/api/v1"
-    : "https://socialnetwork-adonis-stage.incicle.com/api/v1";
+  // const baseUrl = production
+  //   ? "https://socialnetwork-adonis.incicle.com/api/v1"
+  //   : "https://socialnetwork-adonis-stage.incicle.com/api/v1";
   const baseNotifications = production
     ? "https://notifications.incicle.com/api/v1/"
     : "https://notifications-stage.incicle.com/api/v1/";
@@ -70,7 +69,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const { addToast } = useToasts();
+
   const [myProfile, setMyProfile] = useState({}) as any;
   const [resultPerson, setResultPerson] = useState([]) as any;
   const [hasResult, setHasResult] = useState(false);
@@ -127,7 +126,10 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
 
   // SEARCH RESULT
   const anchorRef = useRef(null);
+  // @ts-ignore-next-line
   const searchFunction = async (nickname: string) => {
+    setResultPerson([]);
+    setHasResult(false);
     // if (nickname.trim().length >= 3) {
     //   try {
     //     const response = await api.get(`${baseUrl}/profiles/search/all?search=${nickname}`);
@@ -182,21 +184,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
     localStorage.setItem("companySelected", company.id);
     window.location.reload();
   }
-
-  useEffect(() => {
-    const initMyProfile = async () => {
-      try {
-        const response = await api.get(`${baseUrl}/profiles`);
-        if (response?.status === 200) {
-          setMyProfile(profiles);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    // initMyProfile();
-  }, [profiles.avatar]);
 
   const companiesAvatar = () => {
     return (
