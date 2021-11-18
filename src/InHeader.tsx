@@ -70,7 +70,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
   const { addToast } = useToasts();
   const [myProfile, setMyProfile] = useState({}) as any;
   const [resultPerson, setResultPerson] = useState([]) as any;
@@ -99,6 +98,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   }, []);
 
   useEffect(() => {
+    setMyProfile(profiles)
     getNotifications(api, baseNotifications, 1, 10).then((response: any) => {
       setAllNotifications(response.data);
       if (response.unread > 0) {
@@ -108,42 +108,42 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   }, []);
 
   useEffect(() => {
-    if (user.config.default_profile_type === "person") {
-      setAccountType("person");
-      if (user.companies.length > 0) {
-        const companysIds = user.companies.map((pos: any) => pos.id) as string[];
+    if (myProfile.type === "PERSON") {
+      setAccountType("PERSON");
+      if (myProfile.companies.length > 0) {
+        const companysIds = myProfile.companies.map((pos: any) => pos.id) as string[];
 
         if (companySelected && companysIds.includes(companySelected)) {
           const localCompanySelected =
-            user.companies[user.companies.findIndex((pos: any) => pos.id === companySelected)];
+            myProfile.companies[myProfile.companies.findIndex((pos: any) => pos.id === companySelected)];
           setSelectedCompany(localCompanySelected);
         } else {
-          setSelectedCompany(user.companies[0]);
+          setSelectedCompany(myProfile.companies[0]);
         }
-        setCompanies(user.companies);
+        setCompanies(myProfile.companies);
       }
     }
-  }, [companySelected, user]); // eslint-disable-line
+  }, [companySelected, myProfile]); // eslint-disable-line
 
   // SEARCH RESULT
   const anchorRef = useRef(null);
   const searchFunction = async (nickname: string) => {
-    if (nickname.trim().length >= 3) {
-      try {
-        const response = await api.get(`${baseUrl}/profiles/search/all?search=${nickname}`);
-        if (response?.status === 200) {
-          setResultPerson(response?.data.data);
-          setHasResult(true);
-          return;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    } else {
-      setHasResult(false);
-      return;
-    }
-    setHasResult(false);
+    // if (nickname.trim().length >= 3) {
+    //   try {
+    //     const response = await api.get(`${baseUrl}/profiles/search/all?search=${nickname}`);
+    //     if (response?.status === 200) {
+    //       setResultPerson(response?.data.data);
+    //       setHasResult(true);
+    //       return;
+    //     }
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // } else {
+    //   setHasResult(false);
+    //   return;
+    // }
+    // setHasResult(false);
   };
 
   const handleOpenMenuProfile = (event: any) => {
@@ -156,17 +156,17 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
 
   const showNotifications = async (event: any) => {
     setAnchorNotifications(event.currentTarget);
-    try {
-      const response = await api.get(`${baseNotifications}notifications/me`);
-      if (response?.status === 200) {
-        setAllNotifications(response?.data?.data);
-      }
-    } catch (err) {
-      addToast(`O sistema de notificações não está disponível no momento. Tente novamente mais tarde.`, {
-        appearance: "error",
-      });
-      console.error(err);
-    }
+    // try {
+    //   const response = await api.get(`${baseNotifications}notifications/me`);
+    //   if (response?.status === 200) {
+    //     setAllNotifications(response?.data?.data);
+    //   }
+    // } catch (err) {
+    //   addToast(`O sistema de notificações não está disponível no momento. Tente novamente mais tarde.`, {
+    //     appearance: "error",
+    //   });
+    //   console.error(err);
+    // }
   };
 
   const handleOpenMenuCompanys = (event: any) => {
@@ -188,14 +188,14 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
       try {
         const response = await api.get(`${baseUrl}/profiles`);
         if (response?.status === 200) {
-          setMyProfile(response.data);
+          setMyProfile(profiles);
         }
       } catch (err) {
         console.error(err);
       }
     };
 
-    initMyProfile();
+    // initMyProfile();
   }, [profiles.avatar]);
 
   const companiesAvatar = () => {
@@ -274,7 +274,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                 },
               ].map((anchor: any) => {
                 if (anchor.text === "Projetos") {
-                  if (user.config.default_profile_type === "person") {
+                  if (user.type === "PERSON") {
                     return (
                       <Link
                         key={`${anchor.text}`}
@@ -356,14 +356,14 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     {
                       text: "Gestão por competência",
                       link:
-                        user.config.default_profile_type === "person"
+                        user.type === "PERSON"
                           ? `${links.web.competency}/user_view`
                           : links.web.competency,
                       icon: "https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg",
                     },
                   ].map(anchor => {
                     if (anchor.text === "Projetos") {
-                      if (user.config.default_profile_type === "person") {
+                      if (user.type === "PERSON") {
                         return (
                           <IconButton
                             sx={{
@@ -454,7 +454,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
         <nav>
           <Stack spacing={1} direction="row" sx={{ justifyContent: "flex-end", alignItems: "center" }}>
             <div className="incicleheader-companies">
-              {companies.length > 0 && accountType === "person" && (
+              {companies.length > 0 && accountType === "PERSON" && (
                 <Chip
                   onClick={handleOpenMenuCompanys}
                   size="small"
@@ -704,7 +704,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
             >
               <MenuItem
                 component="a"
-                href={`${links.web.social}p/${myProfile.nickname}`}
+                href={`${links.web.social}/p/${myProfile.nickname}`}
                 sx={{
                   width: "initial !important",
                   textTransform: "capitalize",
@@ -718,10 +718,10 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     marginRight: 15,
                   }}
                 />
-                {myProfile.first_name ? `${myProfile.first_name} ${myProfile.last_name}` : myProfile.name}
+                {myProfile.name}
               </MenuItem>
               <Divider />
-              <MenuItem component="a" href={`${links.web.social}settings`}>
+              <MenuItem component="a" href={`${links.web.social}/settings`}>
                 <ListItemIcon>
                   <Settings fontSize="small" />
                 </ListItemIcon>

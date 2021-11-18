@@ -5,10 +5,10 @@ export const getNotifications: any = async (
   page: any,
   size: any,
 ) => {
-  const response = await api.get(
-    `${baseUrlNotifications}notifications/me/?page=${page}&size=${size}`,
-  );
-  return response.data;
+  // const response = await api.get(
+  //   `${baseUrlNotifications}notifications/me/?page=${page}&size=${size}`,
+  // );
+  return [];
 };
 
 export const showNotification = (content: any) => {
