@@ -1,7 +1,7 @@
 import { Avatar } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { defineLinks } from "../InHeader/utils/functions";
-import { SearchPersons } from "../InHeader/utils/types";
+import { defineLinks } from "../utils/functions";
+import { SearchPersons } from "../utils/types";
 
 interface Props {
   person: SearchPersons;
