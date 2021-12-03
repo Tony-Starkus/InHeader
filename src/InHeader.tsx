@@ -31,17 +31,29 @@ import { HeaderInStyle } from "./styles";
 
 import { defineLinks } from "./utils/functions";
 import maxLetters from "./utils/maxLettes";
-
+import { SearchPersons } from "./utils/types";
+import RenderPerson from "./RenderPerson/RenderPerson";
 interface props {
   user: any;
   profiles: any;
   companySelected: any;
   api: any;
-  signOut: Function;
   production: boolean;
+  noAvatar: string;
+  signOut: Function;
+  getS3Object: (path: string) => Promise<string>;
 }
 
-export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api, signOut, production }) => {
+export const InHeader: React.FC<props> = ({
+  user,
+  profiles,
+  companySelected,
+  api,
+  production,
+  noAvatar,
+  signOut,
+  getS3Object,
+}) => {
   // const baseUrl = production
   //   ? "https://socialnetwork-adonis.incicle.com/api/v1"
   //   : "https://socialnetwork-adonis-stage.incicle.com/api/v1";
@@ -71,7 +83,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   }, []);
 
   const [myProfile, setMyProfile] = useState({}) as any;
-  const [resultPerson, setResultPerson] = useState([]) as any;
+  const [resultPerson, setResultPerson] = useState([] as SearchPersons[]);
   const [hasResult, setHasResult] = useState(false);
   const [companies, setCompanies] = useState<any[]>([]);
   const [accountType, setAccountType] = useState("");
@@ -106,7 +118,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   }, []);
 
   useEffect(() => {
-    setMyProfile(profiles)
+    setMyProfile(profiles);
   }, [profiles]);
 
   useEffect(() => {
@@ -130,25 +142,23 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   // SEARCH RESULT
   const anchorRef = useRef(null);
   // @ts-ignore-next-line
-  const searchFunction = async (nickname: string) => {
+  const searchFunction = async (username: string) => {
     setResultPerson([]);
     setHasResult(false);
-    // if (nickname.trim().length >= 3) {
-    //   try {
-    //     const response = await api.get(`${baseUrl}/profiles/search/all?search=${nickname}`);
-    //     if (response?.status === 200) {
-    //       setResultPerson(response?.data.data);
-    //       setHasResult(true);
-    //       return;
-    //     }
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // } else {
-    //   setHasResult(false);
-    //   return;
-    // }
-    // setHasResult(false);
+    if (username.trim().length >= 3) {
+      api
+        .get(`${defineLinks(production).api.social}profile/name/search?search=${username}`)
+        .then((response: any) => {
+          setResultPerson(response?.data);
+          setHasResult(true);
+        })
+        .catch((err: any) => {
+          console.error(err);
+          setHasResult(false);
+        });
+
+      setHasResult(false);
+    }
   };
 
   const handleOpenMenuProfile = (event: any) => {
@@ -345,10 +355,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     },
                     {
                       text: "Gestão por competência",
-                      link:
-                        user.type === "PERSON"
-                          ? `${links.web.competency}/user_view`
-                          : links.web.competency,
+                      link: user.type === "PERSON" ? `${links.web.competency}/user_view` : links.web.competency,
                       icon: "https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg",
                     },
                   ].map(anchor => {
@@ -572,44 +579,20 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     />
                   </Box>
                 )}
-                renderOption={(propss, option: any) => (
-                  <li {...propss} key={`${option.nickname}`}>
-                    <a
-                      href={`${links.web?.social}p/${option.nickname}`}
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        textDecoration: "none",
-                        color: "#747474",
-                      }}
-                    >
-                      <Avatar src={option.avatar} />
-                      <div
-                        style={{
-                          marginLeft: "5px",
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "14px",
-                            textTransform: "capitalize",
-                          }}
-                        >
-                          {option.name}
-                        </span>
-                        {option.type === "company" && (
-                          <span style={{ fontSize: "11px", marginTop: "-2px" }}>Perfil de empresa</span>
-                        )}
-                      </div>
-                    </a>
-                  </li>
-                )}
+                renderOption={(propss, person) => {
+                  return (
+                    <RenderPerson
+                      liProps={propss}
+                      person={person}
+                      production={production}
+                      noAvatar={noAvatar}
+                      getS3Object={getS3Object}
+                    />
+                  );
+                }}
                 getOptionLabel={(option: any) => option.name}
                 // @ts-ignore-next-line
-                onInputChange={(e: any, value: string) => searchFunction(value)}
+                onInputChange={(e, value: string) => searchFunction(value)}
                 fullWidth
               />
 
@@ -730,5 +713,3 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
     </HeaderInStyle>
   );
 };
-
-
