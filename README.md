@@ -12,6 +12,47 @@ Testing incicle header component as npm package to use in all incicle modules.
 |  api |  Axios instance, used to send request for the backend. |
 |  signOut |  Function to sign out the authenticated user. |
 |  production |  Boolean. Used to define if header will call production routes or stage routes. |
+|  getS3Object |  Function. Used to get images from aws s3 |
+
+
+### Usage
+
+```
+import { InHeader } from 'incicle-header';
+import api from 'services/api';
+
+export const withMainLayout =
+  <P extends ConditionalWrapperProps>(WrappedComponent: ComponentType<any>): FunctionComponent<P> =>
+    (props: any) => {
+      const production = process.env.REACT_APP_PRODUCTION === 'true' ? true : false;
+      const { profiles, companySelected } = useSocialContext() as any;
+
+      return (
+        <Container>
+          <div className="contentSidebar">
+            <Sidebar />
+          </div>
+          <div className="container">
+            <div className="contentHeader">
+              <InHeader
+                user={props.user}
+                profiles={profiles}
+                companySelected={companySelected}
+                api={api}
+                signOut={props.signOut}
+                production={production}
+                getS3Object={getS3Object}
+              />
+            </div>
+
+            <div className="subContainer">
+              <WrappedComponent {...props} />
+            </div>
+          </div>
+        </Container>
+      );
+    };
+```
 
 # TSDX React w/ Storybook User Guide
 
