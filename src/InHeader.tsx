@@ -39,7 +39,7 @@ interface props {
   companySelected: any;
   api: any;
   production: boolean;
-  noAvatar: string;
+  noAvatar?: string;
   signOut: Function;
   getS3Object: (path: string) => Promise<string>;
 }
@@ -585,7 +585,7 @@ export const InHeader: React.FC<props> = ({
                       liProps={propss}
                       person={person}
                       production={production}
-                      noAvatar={noAvatar}
+                      noAvatar={noAvatar || ""}
                       getS3Object={getS3Object}
                     />
                   );
