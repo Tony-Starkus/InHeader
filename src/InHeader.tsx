@@ -65,12 +65,14 @@ export const InHeader: React.FC<props> = ({
     const contentSideBarElement = document.querySelector(".contentSidebar > div") as any;
 
     const handleResize = () => {
-      if (window.innerWidth < 800) {
-        contentSideBarElement!.style.display = "none";
-        return;
+      if (contentSideBarElement) {
+        if (window.innerWidth < 800) {
+          contentSideBarElement!.style.display = "none";
+          return;
+        }
+  
+        contentSideBarElement!.style.display = "initial";
       }
-
-      contentSideBarElement!.style.display = "initial";
     };
 
     handleResize();
