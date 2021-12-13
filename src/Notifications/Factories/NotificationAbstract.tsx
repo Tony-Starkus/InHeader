@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MenuItem,
   Stack,
@@ -8,11 +8,13 @@ import {
 import CircleIcon from "@mui/icons-material/Circle";
 import { defineLinks } from '../../utils/functions';
 
+
 interface IProps {
   notification: any
   url: string
   api: any
   production: boolean
+  getS3Object: (path: string) => Promise<string>
 }
 
 export const preventRedirect = (e: any) => {
@@ -32,7 +34,16 @@ const markAsReaded = (e: any, notification: any, api: any, url: string, producti
   })
 }
 
-export const NotificationContainer: React.FC<IProps> = ({ notification, url, api, production, children }) => {
+export const NotificationContainer: React.FC<IProps> = ({ notification, url, api, production, children, getS3Object }) => {
+
+  const [avatar, setAvatar] = useState("");
+
+  useEffect(() => {
+    getS3Object(notification.sender.avatar_url).then(response => {
+      setAvatar(response);
+    }).catch(() => {
+    });
+  }, []);
 
   return (
     <MenuItem
@@ -46,7 +57,7 @@ export const NotificationContainer: React.FC<IProps> = ({ notification, url, api
       onClick={(e: any) => markAsReaded(e, notification, api, url, production)}
     >
       <Stack direction="row" style={{ width: "100%" }} alignItems="center">
-        <Avatar src={notification.sender.avatar_url} />
+        <Avatar src={avatar} />
         <Stack direction="column" spacing={1} style={{ width: "100%" }}>
           {children}
         </Stack>

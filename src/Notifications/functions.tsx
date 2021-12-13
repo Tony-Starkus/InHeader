@@ -6,13 +6,17 @@ export const getNotifications: any = async (
   baseUrlNotifications: string,
   // @ts-ignore-next-line
 
-// @ts-ignore-next-line  page: any,
+  page: any,
   size: any,
 ) => {
-  // const response = await api.get(
-  //   `${baseUrlNotifications}notifications/me/?page=${page}&size=${size}`,
-  // );
-  return [];
+  const response = await api.get(
+    `${baseUrlNotifications}notifications/me/?page=${page}&size=${size}`,
+  );
+
+  if (response.status) {
+    return [];
+  }
+
 };
 
 export const showNotification = (content: any) => {

@@ -11,6 +11,7 @@ interface props {
   api: any
   profile: any
   production: boolean
+  getS3Object: (path: string) => Promise<string>
 }
 
 const Notifications: React.FC<props> = ({
@@ -20,7 +21,8 @@ const Notifications: React.FC<props> = ({
   data,
   api,
   profile,
-  production
+  production,
+  getS3Object
 }) => {
 
   return (
@@ -63,7 +65,7 @@ const Notifications: React.FC<props> = ({
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      {data && data.map((item: any) => <NotificationItem item={item} api={api} profile={profile} production={production} />)}
+      {data && data.map((item: any) => <NotificationItem item={item} api={api} profile={profile} production={production} getS3Object={getS3Object} />)}
     </Menu>
   );
 };

@@ -6,6 +6,7 @@ interface IProps {
   production: boolean
   api: any
   notificationItem: any
+  getS3Object: (path: string) => Promise<string>
 }
 
 const notificationType = {
@@ -14,7 +15,7 @@ const notificationType = {
 }
 
 // @ts-ignore
-const ScheduleNotificationFactory: React.FC<IProps> = ({ production, api, notificationItem }) => {
+const ScheduleNotificationFactory: React.FC<IProps> = ({ production, api, notificationItem, getS3Object }) => {
   const links = defineLinks(production);
   // @ts-ignore
   const [notification, setNotification] = useState(notificationItem);
@@ -34,6 +35,7 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({ production, api, notifi
             notification={notificationItem}
             api={api}
             production={production}
+            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
@@ -50,6 +52,7 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({ production, api, notifi
             notification={notificationItem}
             api={api}
             production={production}
+            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>

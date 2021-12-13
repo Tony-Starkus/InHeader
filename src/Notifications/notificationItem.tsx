@@ -6,11 +6,12 @@ interface props {
   api: any;
   profile: any;
   production: boolean;
+  getS3Object: (path: string) => Promise<string>
 }
 
-const NotificationItem: React.FC<props> = ({ item, api, profile, production }) => {
+const NotificationItem: React.FC<props> = ({ item, api, profile, production, getS3Object }) => {
 
-  return notificationFactory(item, api, profile, production);
+  return notificationFactory(item, api, profile, production, getS3Object);
 
 };
 

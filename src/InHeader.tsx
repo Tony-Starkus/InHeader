@@ -26,7 +26,6 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import WorkIcon from "@mui/icons-material/Work";
 import Notifications from "./Notifications/notifications";
-import { getNotifications } from "./Notifications/functions";
 import { HeaderInStyle } from "./styles";
 
 import { defineLinks } from "./utils/functions";
@@ -54,9 +53,6 @@ export const InHeader: React.FC<props> = ({
   signOut,
   getS3Object,
 }) => {
-  // const baseUrl = production
-  //   ? "https://socialnetwork-adonis.incicle.com/api/v1"
-  //   : "https://socialnetwork-adonis-stage.incicle.com/api/v1";
   const baseNotifications = production
     ? "https://notifications.incicle.com/api/v1/"
     : "https://notifications-stage.incicle.com/api/v1/";
@@ -70,7 +66,7 @@ export const InHeader: React.FC<props> = ({
           contentSideBarElement!.style.display = "none";
           return;
         }
-  
+
         contentSideBarElement!.style.display = "initial";
       }
     };
@@ -92,6 +88,8 @@ export const InHeader: React.FC<props> = ({
   const [selectedCompany, setSelectedCompany] = useState<any>();
   const links = defineLinks(production);
 
+  const [profileAvatar, setProfileAvatar] = useState("");
+
   const [anchorProfileEl, setAnchorProfileEl] = React.useState(null);
   const openMenuProfile = Boolean(anchorProfileEl);
 
@@ -107,20 +105,24 @@ export const InHeader: React.FC<props> = ({
   const [showModules, setShowModules] = useState(false);
 
   useEffect(() => {
-    setAllNotifications([]);
-  }, []);
-
-  useEffect(() => {
-    getNotifications(api, baseNotifications, 1, 10).then((response: any) => {
-      setAllNotifications(response.data);
-      if (response.unread > 0) {
-        setHasNewNotifications(true);
-      }
-    });
-  }, []);
+    if (anchorNotifications) {
+      api.get(
+        `${baseNotifications}notifications/me/?page=${1}&size=${10}`
+      ).then((response: any) => {
+        console.log(response);
+        setAllNotifications(response.data);
+        if (response.unread > 0) {
+          setHasNewNotifications(true);
+        }
+      });
+    }
+  }, [anchorNotifications]);
 
   useEffect(() => {
     setMyProfile(profiles);
+    getS3Object(profiles.avatar).then(response => {
+      setProfileAvatar(response);
+    }).catch(() => { })
   }, [profiles]);
 
   useEffect(() => {
@@ -163,6 +165,8 @@ export const InHeader: React.FC<props> = ({
     }
   };
 
+  console.log(myProfile)
+
   const handleOpenMenuProfile = (event: any) => {
     setAnchorProfileEl(event.currentTarget);
   };
@@ -173,17 +177,6 @@ export const InHeader: React.FC<props> = ({
 
   const showNotifications = async (event: any) => {
     setAnchorNotifications(event.currentTarget);
-    // try {
-    //   const response = await api.get(`${baseNotifications}notifications/me`);
-    //   if (response?.status === 200) {
-    //     setAllNotifications(response?.data?.data);
-    //   }
-    // } catch (err) {
-    //   addToast(`O sistema de notificações não está disponível no momento. Tente novamente mais tarde.`, {
-    //     appearance: "error",
-    //   });
-    //   console.error(err);
-    // }
   };
 
   const handleOpenMenuCompanys = (event: any) => {
@@ -246,11 +239,7 @@ export const InHeader: React.FC<props> = ({
             }}
           >
             <img
-              src={
-                production
-                  ? "https://core-front-prod.s3.amazonaws.com/logo_incicle.svg"
-                  : "https://core-frontend-develop.s3.sa-east-1.amazonaws.com/logo_incicle.svg"
-              }
+              src="https://static-incicle.s3.amazonaws.com/logo_incicle.svg"
               className="logo"
               alt="logo"
             />
@@ -625,6 +614,7 @@ export const InHeader: React.FC<props> = ({
               api={api}
               profile={myProfile}
               production={production}
+              getS3Object={getS3Object}
             />
 
             {/* NOTIFICATIONS AREA */}
@@ -635,7 +625,7 @@ export const InHeader: React.FC<props> = ({
               size="small"
               style={{ marginRight: 15 }}
             >
-              <Avatar sx={{ width: 35, height: 35 }} src={myProfile.avatar} />
+              <Avatar sx={{ width: 35, height: 35 }} src={profileAvatar} />
             </IconButton>
 
             <Menu
@@ -679,14 +669,14 @@ export const InHeader: React.FC<props> = ({
             >
               <MenuItem
                 component="a"
-                href={`${links.web.social}/p/${myProfile.nickname}`}
+                href={`${links.web.social}p/${myProfile.username}`}
                 sx={{
                   width: "initial !important",
                   textTransform: "capitalize",
                 }}
               >
                 <Avatar
-                  src={myProfile.avatar}
+                  src={profileAvatar}
                   sx={{
                     width: "32px !important",
                     height: "32px !important",
@@ -696,7 +686,7 @@ export const InHeader: React.FC<props> = ({
                 {myProfile.name}
               </MenuItem>
               <Divider />
-              <MenuItem component="a" href={`${links.web.social}/settings`}>
+              <MenuItem component="a" href={`${links.web.social}settings`}>
                 <ListItemIcon>
                   <Settings fontSize="small" />
                 </ListItemIcon>

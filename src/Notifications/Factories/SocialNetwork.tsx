@@ -7,19 +7,23 @@ interface IProps {
   api: any
   profile: any
   notificationItem: any
+  getS3Object: (path: string) => Promise<string>
 }
 
 const notificationType = {
   PUBLICATION_TYPE_LIKE: "PUBLICATION_TYPE_LIKE",
   PUBLICATION_TYPE_COMMENT: "PUBLICATION_TYPE_COMMENT",
+  PUBLICATION_TYPE_COMMENT_OF_COMMENT: "PUBLICATION_TYPE_COMMENT_OF_COMMENT",
+  PUBLICATION_TYPE_LIKE_COMMENT: "PUBLICATION_TYPE_LIKE_COMMENT",
   PUBLICATION_TYPE_SHARE: "PUBLICATION_TYPE_SHARE",
   NEW_FRIEND_REQUEST: "NEW_FRIEND_REQUEST",
+  NEW_FRIEND_RESPONSE: "NEW_FRIEND_RESPONSE",
   NEW_RECOMMENDATION_REQUEST: "NEW_RECOMMENDATION_REQUEST",
   NEW_RECOMMENDATION_RECEIVED: "NEW_RECOMMENDATION_RECEIVED"
 }
 
 // @ts-ignore
-const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, profile, notificationItem }) => {
+const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, profile, notificationItem, getS3Object }) => {
   const links = defineLinks(production);
   // @ts-ignore
   const [notification, setNotification] = useState(notificationItem);
@@ -77,6 +81,7 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
             notification={notificationItem}
             api={api}
             production={production}
+            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
@@ -111,6 +116,7 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
             notification={notificationItem}
             api={api}
             production={production}
+            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
@@ -128,16 +134,71 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
       case notificationType.NEW_RECOMMENDATION_RECEIVED:
         return (
           <NotificationContainer
-            url={`${links.web.social}p/${profile.nickname}`}
+            url={`${links.web.social}p/${profile.username}`}
             notification={notificationItem}
             api={api}
             production={production}
+            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
                 <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
                 {notificationItem.type === notificationType.NEW_RECOMMENDATION_REQUEST && ' solicitou uma recomendação de você'}
                 {notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED && ' enviou uma recomendação para você'}
+              </label>
+            </NotificationContentText>
+          </NotificationContainer>
+        );
+
+      case notificationType.PUBLICATION_TYPE_LIKE_COMMENT:
+        return (
+          <NotificationContainer
+            url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
+            notification={notificationItem}
+            api={api}
+            production={production}
+            getS3Object={getS3Object}
+          >
+            <NotificationContentText>
+              <label>
+                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
+                {' curtiu seu comentário'}
+              </label>
+            </NotificationContentText>
+          </NotificationContainer>
+        );
+
+      case notificationType.PUBLICATION_TYPE_COMMENT_OF_COMMENT:
+        return (
+          <NotificationContainer
+            url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
+            notification={notificationItem}
+            api={api}
+            production={production}
+            getS3Object={getS3Object}
+          >
+            <NotificationContentText>
+              <label>
+                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
+                {' respondeu seu comentário'}
+              </label>
+            </NotificationContentText>
+          </NotificationContainer>
+        );
+
+      case notificationType.NEW_FRIEND_RESPONSE:
+        return (
+          <NotificationContainer
+            url={`${links.web.social}p/${profile.username}`}
+            notification={notificationItem}
+            api={api}
+            production={production}
+            getS3Object={getS3Object}
+          >
+            <NotificationContentText>
+              <label>
+                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
+                {' aceitou seu pedido de amizade'}
               </label>
             </NotificationContentText>
           </NotificationContainer>
