@@ -109,7 +109,6 @@ export const InHeader: React.FC<props> = ({
       api.get(
         `${baseNotifications}notifications/me/?page=${1}&size=${10}`
       ).then((response: any) => {
-        console.log(response);
         setAllNotifications(response.data);
         if (response.unread > 0) {
           setHasNewNotifications(true);
@@ -164,8 +163,6 @@ export const InHeader: React.FC<props> = ({
       setHasResult(false);
     }
   };
-
-  console.log(myProfile)
 
   const handleOpenMenuProfile = (event: any) => {
     setAnchorProfileEl(event.currentTarget);
