@@ -23,7 +23,7 @@ const markAsReaded = (e: any, notification: any, api: any, url: string, producti
         window.location.href = url;
       }
     })
-    .catch((error: any) => {
+    .catch(() => {
       window.location.href = url;
     });
 };

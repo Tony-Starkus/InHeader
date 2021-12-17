@@ -3,10 +3,10 @@ import React, { createContext, useEffect, useState } from "react";
 import { User } from "../interfaces/User";
 import { MeProps } from "../interfaces/Me";
 
-type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
-type GetS3Object = (path: string) => Promise<string>;
+export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
+export type GetS3Object = (path: string) => Promise<string>;
 
-interface HeaderProviderProps {
+export interface HeaderProviderProps {
   user?: User;
   profiles?: MeProps;
   companySelected?: string;
@@ -15,14 +15,14 @@ interface HeaderProviderProps {
   getS3Object: GetS3Object;
 }
 
-interface HeaderContextProps extends HeaderProviderProps {
+export interface HeaderContextProps extends HeaderProviderProps {
   setUser: SetState<User>;
   setProfiles: SetState<MeProps>;
   setCompanySelected: SetState<string>;
   setProduction: SetState<boolean>;
 }
 
-interface Props {
+export interface Props {
   value: HeaderProviderProps;
 }
 

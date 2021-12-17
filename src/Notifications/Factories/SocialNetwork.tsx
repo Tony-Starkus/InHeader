@@ -23,6 +23,7 @@ const notificationType = {
 const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }) => {
   const { production, profiles: profile } = useHeaderProvider();
   const links = defineLinks(production);
+  // @ts-ignore
   const [notification, setNotification] = useState(notificationItem);
 
   // const acceptRequestFriend = (e: any) => {

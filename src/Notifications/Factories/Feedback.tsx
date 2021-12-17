@@ -14,7 +14,7 @@ const notificationType = {
 
 // @ts-ignore
 const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => {
-  const { api, getS3Object, production, profiles: profile } = useHeaderProvider();
+  const { production } = useHeaderProvider();
   const links = defineLinks(production);
   // @ts-ignore
   const [notification, setNotification] = useState(notificationItem);
