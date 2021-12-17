@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { defineLinks } from "../../utils/functions";
-import { NotificationContainer, NotificationContentText } from './NotificationAbstract';
+import { NotificationContainer, NotificationContentText } from "./NotificationAbstract";
+import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 
 interface IProps {
-  production: boolean
-  api: any
-  profile: any
-  notificationItem: any
-  getS3Object: (path: string) => Promise<string>
+  notificationItem: any;
 }
 
 const notificationType = {
@@ -19,13 +16,13 @@ const notificationType = {
   NEW_FRIEND_REQUEST: "NEW_FRIEND_REQUEST",
   NEW_FRIEND_RESPONSE: "NEW_FRIEND_RESPONSE",
   NEW_RECOMMENDATION_REQUEST: "NEW_RECOMMENDATION_REQUEST",
-  NEW_RECOMMENDATION_RECEIVED: "NEW_RECOMMENDATION_RECEIVED"
-}
+  NEW_RECOMMENDATION_RECEIVED: "NEW_RECOMMENDATION_RECEIVED",
+};
 
 // @ts-ignore
-const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, profile, notificationItem, getS3Object }) => {
+const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }) => {
+  const { production, profiles: profile } = useHeaderProvider();
   const links = defineLinks(production);
-  // @ts-ignore
   const [notification, setNotification] = useState(notificationItem);
 
   // const acceptRequestFriend = (e: any) => {
@@ -71,21 +68,14 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
   }, [notification]);
 
   const renderActions = () => {
-
     switch (notificationItem.type) {
-
       case notificationType.NEW_FRIEND_REQUEST:
         return (
-          <NotificationContainer
-            url={`${links.web.social}friends`}
-            notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
-          >
+          <NotificationContainer url={`${links.web.social}friends`} notification={notificationItem}>
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> te enviou uma solicitação de amizade.
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> te enviou uma
+                solicitação de amizade.
               </label>
             </NotificationContentText>
             {/* <Stack direction="row" spacing={1}>
@@ -114,16 +104,13 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
           <NotificationContainer
             url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
             notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
-                {notificationItem.type === notificationType.PUBLICATION_TYPE_LIKE && ' curtiu a '}
-                {notificationItem.type === notificationType.PUBLICATION_TYPE_COMMENT && ' comentou na '}
-                {notificationItem.type === notificationType.PUBLICATION_TYPE_SHARE && ' compartilhou '}
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
+                {notificationItem.type === notificationType.PUBLICATION_TYPE_LIKE && " curtiu a "}
+                {notificationItem.type === notificationType.PUBLICATION_TYPE_COMMENT && " comentou na "}
+                {notificationItem.type === notificationType.PUBLICATION_TYPE_SHARE && " compartilhou "}
                 sua publicação
               </label>
             </NotificationContentText>
@@ -133,18 +120,14 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
       case notificationType.NEW_RECOMMENDATION_REQUEST:
       case notificationType.NEW_RECOMMENDATION_RECEIVED:
         return (
-          <NotificationContainer
-            url={`${links.web.social}p/${profile.username}`}
-            notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
-          >
+          <NotificationContainer url={`${links.web.social}p/${profile?.username}`} notification={notificationItem}>
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
-                {notificationItem.type === notificationType.NEW_RECOMMENDATION_REQUEST && ' solicitou uma recomendação de você'}
-                {notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED && ' enviou uma recomendação para você'}
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
+                {notificationItem.type === notificationType.NEW_RECOMMENDATION_REQUEST &&
+                  " solicitou uma recomendação de você"}
+                {notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED &&
+                  " enviou uma recomendação para você"}
               </label>
             </NotificationContentText>
           </NotificationContainer>
@@ -155,14 +138,11 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
           <NotificationContainer
             url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
             notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
-                {' curtiu seu comentário'}
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
+                {" curtiu seu comentário"}
               </label>
             </NotificationContentText>
           </NotificationContainer>
@@ -173,14 +153,11 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
           <NotificationContainer
             url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
             notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
-                {' respondeu seu comentário'}
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
+                {" respondeu seu comentário"}
               </label>
             </NotificationContentText>
           </NotificationContainer>
@@ -188,33 +165,22 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ production, api, p
 
       case notificationType.NEW_FRIEND_RESPONSE:
         return (
-          <NotificationContainer
-            url={`${links.web.social}p/${profile.username}`}
-            notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
-          >
+          <NotificationContainer url={`${links.web.social}p/${profile?.username}`} notification={notificationItem}>
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label>
-                {' aceitou seu pedido de amizade'}
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
+                {" aceitou seu pedido de amizade"}
               </label>
             </NotificationContentText>
           </NotificationContainer>
         );
 
       default:
-        return (<></>);
-
+        return <></>;
     }
-  }
+  };
 
-  return (
-    <React.Fragment>
-      {renderActions()}
-    </React.Fragment>
-  )
-}
+  return <React.Fragment>{renderActions()}</React.Fragment>;
+};
 
 export default SocialNetworkNotificationFactory;

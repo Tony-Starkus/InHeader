@@ -8,23 +8,9 @@ interface props {
   anchorNotifications: any;
   setAnchorNotifications: any;
   data: any;
-  api: any
-  profile: any
-  production: boolean
-  getS3Object: (path: string) => Promise<string>
 }
 
-const Notifications: React.FC<props> = ({
-  openNotifications,
-  anchorNotifications,
-  setAnchorNotifications,
-  data,
-  api,
-  profile,
-  production,
-  getS3Object
-}) => {
-
+const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications, setAnchorNotifications, data }) => {
   return (
     <Menu
       open={openNotifications}
@@ -65,7 +51,7 @@ const Notifications: React.FC<props> = ({
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      {data && data.map((item: any) => <NotificationItem item={item} api={api} profile={profile} production={production} getS3Object={getS3Object} />)}
+      {data && data.map((item: any) => <NotificationItem item={item} />)}
     </Menu>
   );
 };

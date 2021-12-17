@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { defineLinks } from "../../utils/functions";
-import { NotificationContainer, NotificationContentText } from './NotificationAbstract';
+import { NotificationContainer, NotificationContentText } from "./NotificationAbstract";
+import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 
 interface IProps {
-  production: boolean
-  api: any
-  notificationItem: any
-  getS3Object: (path: string) => Promise<string>
+  notificationItem: any;
 }
 
 const notificationType = {
   NEW_EVENT_SCHEDULE_INVITATION: "NEW_EVENT_SCHEDULE_INVITATION",
-  NEW_TASK_INVITATION: "NEW_TASK_INVITATION"
-}
+  NEW_TASK_INVITATION: "NEW_TASK_INVITATION",
+};
 
 // @ts-ignore
-const ScheduleNotificationFactory: React.FC<IProps> = ({ production, api, notificationItem, getS3Object }) => {
+const ScheduleNotificationFactory: React.FC<IProps> = ({ notificationItem }) => {
+  const { api, getS3Object, production, profiles: profile } = useHeaderProvider();
   const links = defineLinks(production);
   // @ts-ignore
   const [notification, setNotification] = useState(notificationItem);
@@ -25,21 +24,17 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({ production, api, notifi
   }, [notification]);
 
   const renderActions = () => {
-
     switch (notificationItem.type) {
-
       case notificationType.NEW_EVENT_SCHEDULE_INVITATION:
         return (
           <NotificationContainer
             url={`${links.web.schedule}event/${notificationItem.common.event_id}`}
             notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> te adicionou em um evento.
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> te adicionou em um
+                evento.
               </label>
             </NotificationContentText>
           </NotificationContainer>
@@ -50,29 +45,22 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({ production, api, notifi
           <NotificationContainer
             url={`${links.web.schedule}task/${notificationItem.common.task_id}`}
             notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
           >
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> delegou uma atividade para você.
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> delegou uma atividade
+                para você.
               </label>
             </NotificationContentText>
           </NotificationContainer>
         );
 
       default:
-        return (<></>);
-
+        return <></>;
     }
-  }
+  };
 
-  return (
-    <React.Fragment>
-      {renderActions()}
-    </React.Fragment>
-  )
-}
+  return <React.Fragment>{renderActions()}</React.Fragment>;
+};
 
 export default ScheduleNotificationFactory;

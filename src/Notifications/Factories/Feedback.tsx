@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { defineLinks } from "../../utils/functions";
-import { NotificationContainer, NotificationContentText } from './NotificationAbstract';
+import { NotificationContainer, NotificationContentText } from "./NotificationAbstract";
+import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 
 interface IProps {
-  production: boolean
-  api: any
-  notificationItem: any
-  getS3Object: (path: string) => Promise<string>
+  notificationItem: any;
 }
 
 const notificationType = {
   RECEIVED_FEEDBACK: "RECEIVED_FEEDBACK",
-  REQUEST_FEEDBACK: "REQUEST_FEEDBACK"
-}
+  REQUEST_FEEDBACK: "REQUEST_FEEDBACK",
+};
 
 // @ts-ignore
-const FeedbackNotificationFactory: React.FC<IProps> = ({ production, api, notificationItem, getS3Object }) => {
+const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => {
+  const { api, getS3Object, production, profiles: profile } = useHeaderProvider();
   const links = defineLinks(production);
   // @ts-ignore
   const [notification, setNotification] = useState(notificationItem);
@@ -25,21 +24,14 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ production, api, notifi
   }, [notification]);
 
   const renderActions = () => {
-
     switch (notificationItem.type) {
-
       case notificationType.RECEIVED_FEEDBACK:
         return (
-          <NotificationContainer
-            url={`${links.web.social}feedback`}
-            notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
-          >
+          <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> enviou um feedback para você.
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> enviou um feedback
+                para você.
               </label>
             </NotificationContentText>
           </NotificationContainer>
@@ -47,32 +39,22 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ production, api, notifi
 
       case notificationType.REQUEST_FEEDBACK:
         return (
-          <NotificationContainer
-            url={`${links.web.social}feedback`}
-            notification={notificationItem}
-            api={api}
-            production={production}
-            getS3Object={getS3Object}
-          >
+          <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: 'capitalize' }}>{notification.sender.name}</label> pediu um feedback de você.
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> pediu um feedback de
+                você.
               </label>
             </NotificationContentText>
           </NotificationContainer>
         );
 
       default:
-        return (<></>);
-
+        return <></>;
     }
-  }
+  };
 
-  return (
-    <React.Fragment>
-      {renderActions()}
-    </React.Fragment>
-  )
-}
+  return <React.Fragment>{renderActions()}</React.Fragment>;
+};
 
 export default FeedbackNotificationFactory;

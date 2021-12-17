@@ -2,23 +2,23 @@ import { Avatar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { defineLinks } from "../utils/functions";
 import { SearchPersons } from "../utils/types";
+import { useHeaderProvider } from "../hooks/useHeaderProvider";
 
 interface Props {
   person: SearchPersons;
   liProps: React.HTMLAttributes<HTMLLIElement>;
-  production: boolean;
   noAvatar: string;
-  getS3Object: (path: string) => Promise<string>;
 }
 
-const RenderPerson: React.FC<Props> = ({ liProps, noAvatar, production, person, getS3Object }) => {
+const RenderPerson: React.FC<Props> = ({ liProps, noAvatar, person }) => {
+  const { production, getS3Object } = useHeaderProvider();
   const links = defineLinks(production);
   const [url, setUrl] = useState("");
 
   useEffect(() => {
     getS3Object(person.avatar)
       .then(data => setUrl(data))
-      .catch(err => console.error(err));
+      .catch(() => {});
   }, [person, setUrl]);
 
   return (
