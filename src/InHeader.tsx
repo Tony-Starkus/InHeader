@@ -36,6 +36,7 @@ import { SearchPersons } from "./utils/types";
 import RenderPerson from "./RenderPerson/RenderPerson";
 import { User } from "./interfaces/User";
 import { MeProps } from "./interfaces/Me";
+import RenderAvatar from "./RenderImage/RenderAvatar";
 interface props {
   user: User;
   profiles: MeProps;
@@ -44,7 +45,6 @@ interface props {
   production: boolean;
   noAvatar?: string;
   signOut: Function;
-  getS3Object: (path: string) => Promise<string>;
 }
 
 export const InHeader: React.FC<props> = ({
@@ -55,8 +55,8 @@ export const InHeader: React.FC<props> = ({
   production,
   noAvatar,
   signOut,
-  getS3Object,
 }) => {
+
   const baseNotifications = production
     ? "https://notifications.incicle.com/api/v1/"
     : "https://notifications-stage.incicle.com/api/v1/";
@@ -92,8 +92,6 @@ export const InHeader: React.FC<props> = ({
   const [selectedCompany, setSelectedCompany] = useState<any>();
   const links = defineLinks(production);
 
-  const [profileAvatar, setProfileAvatar] = useState("");
-
   const [anchorProfileEl, setAnchorProfileEl] = React.useState(null);
   const openMenuProfile = Boolean(anchorProfileEl);
 
@@ -121,11 +119,6 @@ export const InHeader: React.FC<props> = ({
 
   useEffect(() => {
     setMyProfile(profiles);
-    getS3Object(profiles.avatar)
-      .then(response => {
-        setProfileAvatar(response);
-      })
-      .catch(() => {});
   }, [profiles]);
 
   useEffect(() => {
@@ -235,8 +228,7 @@ export const InHeader: React.FC<props> = ({
           api,
           production,
           noAvatar,
-          signOut,
-          getS3Object,
+          signOut
         } as any
       }
     >
@@ -627,7 +619,7 @@ export const InHeader: React.FC<props> = ({
                 size="small"
                 style={{ marginRight: 15 }}
               >
-                <Avatar sx={{ width: 35, height: 35 }} src={profileAvatar} />
+                <RenderAvatar sx={{ width: 35, height: 35 }} src={profiles?.avatar} />
               </IconButton>
 
               <Menu
@@ -677,8 +669,8 @@ export const InHeader: React.FC<props> = ({
                     textTransform: "capitalize",
                   }}
                 >
-                  <Avatar
-                    src={profileAvatar}
+                  <RenderAvatar
+                    src={profiles?.avatar}
                     sx={{
                       width: "32px !important",
                       height: "32px !important",

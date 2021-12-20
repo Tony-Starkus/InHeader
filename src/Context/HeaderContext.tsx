@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import AWS from "aws-sdk";
 
 import { User } from "../interfaces/User";
 import { MeProps } from "../interfaces/Me";
@@ -33,6 +34,54 @@ const HeaderProvider: React.FC<Props> = ({ children, value }) => {
   const [profiles, setProfiles] = useState(value.profiles);
   const [companySelected, setCompanySelected] = useState(value.companySelected);
   const [production, setProduction] = useState(value.production);
+  var bucket: string = value.production ? "bucket-incicle" : "bucket-incicle-stage";
+
+  useEffect(() => {
+    if (production !== undefined || production !== null) {
+      if (production) {
+        AWS.config.update({
+          accessKeyId: "AKIAZP4HAFQZ3AQMN4G3",
+          secretAccessKey: "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",
+          region: "sa-east-1",
+        });
+      } else {
+        AWS.config.update({
+          accessKeyId: "AKIAZP4HAFQZ3AQMN4G3",
+          secretAccessKey: "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",
+          region: "us-east-1",
+        });
+      }
+    }
+  }, [production]);
+
+  const s3 = new AWS.S3();
+
+  const getS3Object = (src: string): Promise<string> => {
+    function encode(data: any) {
+      var str = data.reduce(function (a: any, b: any) {
+        return a + String.fromCharCode(b);
+      }, "");
+
+      return btoa(str).replace(/.{76}(?=.)/g, "$&\n");
+    }
+
+    return new Promise((resolve, reject) => {
+      s3.getObject(
+        {
+          Bucket: `${bucket}`,
+          Key: src,
+        },
+        (error: AWS.AWSError, data: AWS.S3.GetObjectOutput) => {
+          if (error) {
+            reject(error);
+          } else {
+            const url = "data:image/jpg;base64," + encode(data.Body);
+            resolve(url);
+          }
+        },
+      );
+    });
+  };
 
   useEffect(() => {
     if (value.user) setUser(value.user);
@@ -51,7 +100,7 @@ const HeaderProvider: React.FC<Props> = ({ children, value }) => {
     production,
     setProduction,
     api: value.api,
-    getS3Object: value.getS3Object,
+    getS3Object: getS3Object,
   } as HeaderContextProps;
 
   return <HeaderContext.Provider value={context}>{children}</HeaderContext.Provider>;
