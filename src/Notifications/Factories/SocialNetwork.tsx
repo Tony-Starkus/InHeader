@@ -121,7 +121,7 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
       case notificationType.NEW_RECOMMENDATION_REQUEST:
       case notificationType.NEW_RECOMMENDATION_RECEIVED:
         return (
-          <NotificationContainer url={`${links.web.social}p/${profile?.username}`} notification={notificationItem}>
+          <NotificationContainer url={`${links.web.social}p/${notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED ? profile?.username : notification.sender.username}`} notification={notificationItem}>
             <NotificationContentText>
               <label>
                 <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
