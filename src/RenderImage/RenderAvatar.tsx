@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { Avatar } from "@mui/material"
 import { SxProps, Theme } from '@mui/system';
-import { useHeaderProvider } from "../hooks/useHeaderProvider";
+import { useHeaderProvider } from '../hooks/useHeaderProvider';
 
 interface Props {
   src: string

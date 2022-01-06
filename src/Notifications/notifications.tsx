@@ -51,7 +51,7 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      {data && data.map((item: any) => <NotificationItem item={item} />)}
+      {data && data.map((item: any) => <NotificationItem key={item._id} item={item} />)}
     </Menu>
   );
 };
