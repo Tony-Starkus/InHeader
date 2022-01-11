@@ -3,6 +3,7 @@ export const incicleModules = {
   schedule: "schedule",
   feedback: "feedback",
   project: "project",
+  endomarketing: "endomarketing"
 };
 
 export interface SearchPersons {

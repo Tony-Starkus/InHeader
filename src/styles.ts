@@ -30,6 +30,11 @@ export const HeaderInStyle = styled.header`
     justify-content: flex-end;
   }
 
+
+  .incicleheader-content.center {
+    justify-content: center;
+  }
+
   .incicleheader-inputbutton {
     display: none;
   }
