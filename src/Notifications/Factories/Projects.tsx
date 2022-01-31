@@ -23,10 +23,14 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
     switch (notificationItem.type) {
       case notificaitonType.ADDED_IN_ACTIVITY:
         return (
-          <NotificationContainer url={`${links.web.project}`} notification={notificationItem}>
+          <NotificationContainer
+            url={`${links.web.project}kanban/${notificationItem.common.project_id}`}
+            notification={notificationItem}
+          >
             <NotificationContentText>
               <label>
-                {notificationItem.sender.name} incluiu você na atividade "{notificationItem.common.title_activity}".
+                {notificationItem.sender.name} incluiu você na atividade{" "}
+                <span style={{ fontWeight: 600 }}>{notificationItem.common.title_activity}</span>.
               </label>
             </NotificationContentText>
           </NotificationContainer>
@@ -40,8 +44,8 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
           >
             <NotificationContentText>
               <label>
-                {notificationItem.sender.name} adicionou você como membro do projeto "
-                {notificationItem.common.title_project}".
+                {notificationItem.sender.name} adicionou você como membro do projeto{" "}
+                <span style={{ fontWeight: 600 }}>{notificationItem.common.title_project}</span>.
               </label>
             </NotificationContentText>
           </NotificationContainer>
@@ -51,7 +55,10 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
         return (
           <NotificationContainer url={`#`} notification={notificationItem}>
             <NotificationContentText>
-              <label>O praso da atividade {notificationItem.common.title_activity} expirou.</label>
+              <label>
+                O praso da atividade <span style={{ fontWeight: 600 }}>{notificationItem.common.title_activity}</span>{" "}
+                expirou.
+              </label>
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -60,7 +67,10 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
         return (
           <NotificationContainer url={`#`} notification={notificationItem}>
             <NotificationContentText>
-              <label>Você foi removido do projeto {notificationItem.common.title_project}</label>
+              <label>
+                {notificationItem.sender.name} removeu você do projeto{" "}
+                <span style={{ fontWeight: 600 }}>{notificationItem.common.title_project}</span>.
+              </label>
             </NotificationContentText>
           </NotificationContainer>
         );

@@ -47,16 +47,7 @@ interface props {
   signOut: Function;
 }
 
-export const InHeader: React.FC<props> = ({
-  user,
-  profiles,
-  companySelected,
-  api,
-  production,
-  noAvatar,
-  signOut,
-}) => {
-
+export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api, production, noAvatar, signOut }) => {
   const baseNotifications = production
     ? "https://notifications.incicle.com/api/v1/"
     : "https://notifications-stage.incicle.com/api/v1/";
@@ -237,7 +228,7 @@ export const InHeader: React.FC<props> = ({
           api,
           production,
           noAvatar,
-          signOut
+          signOut,
         } as any
       }
     >
@@ -375,6 +366,7 @@ export const InHeader: React.FC<props> = ({
                             if (user.type === "PERSON") {
                               return (
                                 <IconButton
+                                  key={anchor.text}
                                   sx={{
                                     justifyContent: "flex-start",
                                     height: "max-content",

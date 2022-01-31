@@ -30,7 +30,6 @@ export const HeaderInStyle = styled.header`
     justify-content: flex-end;
   }
 
-
   .incicleheader-content.center {
     justify-content: center;
   }
@@ -96,6 +95,7 @@ export const HeaderInStyle = styled.header`
     }
 
     .incicleheader-modules-content.toggle.view {
+      z-index: 10;
       position: absolute;
       top: calc(100% + 16px);
       left: 8px;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu } from "@mui/material";
+import { Menu, Typography } from "@mui/material";
 // import api from "services/api";
 import NotificationItem from "./notificationItem";
 
@@ -52,6 +52,11 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
       {data && data.map((item: any) => <NotificationItem key={item._id} item={item} />)}
+      {(!data || data.length === 0) && (
+        <Typography style={{ width: "100%", fontStyle: "italic", textAlign: "center", color: "#a8a8a8" }}>
+          Não há notificações no momento
+        </Typography>
+      )}
     </Menu>
   );
 };
