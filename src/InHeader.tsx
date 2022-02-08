@@ -1104,7 +1104,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                           marginRight: 15,
                         }}
                       />
-                      {myProfile.name.length > 40 ? `${myProfile.name.substring(0, 40)}...` : myProfile.name}
+                      {myProfile.name?.length > 40 ? `${myProfile.name.substring(0, 40)}...` : myProfile.name}
                     </MenuItem>
                     <Divider />
 

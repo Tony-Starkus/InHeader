@@ -13,7 +13,7 @@ export const ButtonNotification = styledMUI(Button)(({ active = false }: IButton
   fontSize: "12px",
   transition: "filter 0.2s ease-in-out",
   textTransform: "none",
-
+  boxShadow: "none !important",
   "&:hover": {
     backgroundColor: active ? "#CFEBFF" : "#DEDEDE",
     filter: "brightness(0.9)",

@@ -40,14 +40,14 @@ const HeaderProvider: React.FC<Props> = ({ children, value }) => {
     if (production !== undefined || production !== null) {
       if (production) {
         AWS.config.update({
-          accessKeyId: "AKIAZP4HAFQZ3AQMN4G3",
-          secretAccessKey: "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",
+          accessKeyId: "AKIAZP4HAFQZWJYFY6L2",
+          secretAccessKey: "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",
           region: "sa-east-1",
         });
       } else {
         AWS.config.update({
-          accessKeyId: "AKIAZP4HAFQZ3AQMN4G3",
-          secretAccessKey: "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",
+          accessKeyId: "AKIAZP4HAFQZWJYFY6L2",
+          secretAccessKey: "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",
           region: "us-east-1",
         });
       }
