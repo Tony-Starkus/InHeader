@@ -53,7 +53,7 @@ export const NotificationContainer: React.FC<IProps> = ({ notification, url, chi
     >
       <Stack direction="row" style={{ width: "100%" }} alignItems="center">
         <Avatar src={avatar} />
-        <Stack direction="column" spacing={1} style={{ width: "100%" }}>
+        <Stack direction="column" spacing={1} style={{ width: "100%", marginRight: "10px" }}>
           {children}
         </Stack>
         {!notification.read && <CircleIcon sx={{ color: "#00adcb", width: 10 }} />}
@@ -68,6 +68,8 @@ export const NotificationContentText: React.FC = ({ children }) => {
       sx={{
         fontSize: "13px",
         width: "100%",
+        overflowWrap: "anywhere",
+        marginRight: "10px",
         label: { fontSize: "13px" },
         "*": { cursor: "pointer" },
       }}

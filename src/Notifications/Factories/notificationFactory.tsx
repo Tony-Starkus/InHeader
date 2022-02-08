@@ -2,7 +2,7 @@ import React from "react";
 import SocialNetworkNotificationFactory from "./SocialNetwork";
 import FeedbackNotificationFactory from "./Feedback";
 import ScheduleNotificationFactory from "./Schedule";
-import EndomarketingNotificationFactory from './Endomarketing';
+import EndomarketingNotificationFactory from "./Endomarketing";
 import { incicleModules } from "../../utils/types";
 import { ProjectsFactory } from "./Projects";
 
@@ -21,7 +21,7 @@ function createNotificationFactory(item: any) {
       return <ProjectsFactory notificationItem={item} />;
 
     case incicleModules.endomarketing:
-      return <EndomarketingNotificationFactory notificationItem={item} />
+      return <EndomarketingNotificationFactory notificationItem={item} />;
 
     default:
       break;

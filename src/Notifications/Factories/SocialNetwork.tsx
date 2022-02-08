@@ -17,6 +17,7 @@ const notificationType = {
   NEW_FRIEND_RESPONSE: "NEW_FRIEND_RESPONSE",
   NEW_RECOMMENDATION_REQUEST: "NEW_RECOMMENDATION_REQUEST",
   NEW_RECOMMENDATION_RECEIVED: "NEW_RECOMMENDATION_RECEIVED",
+  BIRTHDAYS_TODAY: "BIRTHDAYS_TODAY",
 };
 
 // @ts-ignore
@@ -121,7 +122,14 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
       case notificationType.NEW_RECOMMENDATION_REQUEST:
       case notificationType.NEW_RECOMMENDATION_RECEIVED:
         return (
-          <NotificationContainer url={`${links.web.social}p/${notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED ? profile?.username : notification.sender.username}`} notification={notificationItem}>
+          <NotificationContainer
+            url={`${links.web.social}p/${
+              notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED
+                ? profile?.username
+                : notification.sender.username
+            }`}
+            notification={notificationItem}
+          >
             <NotificationContentText>
               <label>
                 <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
@@ -172,6 +180,18 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
                 <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
                 {" aceitou seu pedido de amizade"}
               </label>
+            </NotificationContentText>
+          </NotificationContainer>
+        );
+
+      case notificationType.BIRTHDAYS_TODAY:
+        return (
+          <NotificationContainer
+            url={`${links.web.social}p/${notificationItem.sender.username}`}
+            notification={notificationItem}
+          >
+            <NotificationContentText>
+              {notificationItem.sender.name} está fazendo aniversário hoje!
             </NotificationContentText>
           </NotificationContainer>
         );

@@ -210,13 +210,12 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   }, []);
 
   const handleClick = () => {
-    setShowModules((prev) => !prev);
+    setShowModules(prev => !prev);
   };
 
   const handleClickAway = () => {
     setShowModules(false);
   };
-
 
   return (
     <HeaderProvider
@@ -238,7 +237,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
           <>
             <section className="incicleheader-content">
               <nav style={{ alignItems: "center", display: "flex" }}>
-
                 {/* LOGO ICON */}
                 <Link
                   href={`${links.web?.social}`}
@@ -252,7 +250,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                 >
                   <img src="https://static-incicle.s3.amazonaws.com/logo_incicle.svg" className="logo" alt="logo" />
                 </Link>
-
 
                 {/* MODULOS MENU */}
                 <Stack spacing={0} direction="row" className="incicleheader-modules" sx={{ alignItems: "center" }}>
@@ -448,14 +445,12 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     </ClickAwayListener>
                   )}
                 </Stack>
-
               </nav>
             </section>
 
             <section className="incicleheader-content flex-end">
               <nav>
                 <Stack spacing={1} direction="row" sx={{ justifyContent: "flex-end", alignItems: "center" }}>
-
                   {/* COMPANIES */}
                   <div className="incicleheader-companies">
                     {companies.length > 0 && accountType === "PERSON" && (
@@ -606,7 +601,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     </IconButton>
                   </Paper>
 
-
                   {/* FRIENDS */}
                   <IconButton size="medium" sx={{ width: 35, height: 35 }} href={`${links.web?.social}friends`}>
                     <PeopleAltIcon sx={{ width: 25, height: 25 }} />
@@ -645,6 +639,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                       elevation: 0,
                       sx: {
                         overflow: "visible",
+                        maxWidth: "250px",
                         filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
                         mt: 1.5,
                         "& .MuiAvatar-root": {
@@ -681,6 +676,8 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                       sx={{
                         width: "initial !important",
                         textTransform: "capitalize",
+                        overflowWrap: "anywhere",
+                        whiteSpace: "break-spaces",
                       }}
                     >
                       <RenderAvatar
@@ -691,7 +688,9 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                           marginRight: 15,
                         }}
                       />
-                      {myProfile.name}
+                      {myProfile.name && myProfile.name.length > 40
+                        ? `${myProfile.name.substring(0, 40)}...`
+                        : myProfile.name}
                     </MenuItem>
                     <Divider />
                     <MenuItem component="a" href={`${links.web.social}settings`}>
@@ -715,8 +714,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
           <>
             <section className="incicleheader-content">
               <nav style={{ alignItems: "center", display: "flex" }}>
-
-
                 {/* MODULOS MENU */}
                 <Stack spacing={0} direction="row" className="incicleheader-modules" sx={{ alignItems: "center" }}>
                   <div className={`incicleheader-modules-content original ${showModules ? "view" : ""}`}>
@@ -906,12 +903,12 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                             return <></>;
                           })}
                         </div>
-                      ) : ''}
+                      ) : (
+                        ""
+                      )}
                     </>
                   </ClickAwayListener>
-
                 </Stack>
-
 
                 {/* SEARCH INPUT */}
                 <Paper
@@ -997,13 +994,11 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     />
                   </IconButton>
                 </Paper>
-
               </nav>
             </section>
 
             <section className="incicleheader-content center">
               <nav style={{ alignItems: "center", display: "flex" }}>
-
                 {/* LOGO ICON */}
                 <Link
                   href={`${links.web?.social}`}
@@ -1017,14 +1012,12 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                 >
                   <img src="https://static-incicle.s3.amazonaws.com/logo_incicle.svg" className="logo" alt="logo" />
                 </Link>
-
               </nav>
             </section>
 
             <section className="incicleheader-content flex-end">
               <nav>
                 <Stack spacing={1} direction="row" sx={{ justifyContent: "flex-end", alignItems: "center" }}>
-
                   {/* NOTIFICATIONS AREA */}
                   {
                     <IconButton size="medium" sx={{ width: 35, height: 35 }} onClick={showNotifications}>
@@ -1033,15 +1026,16 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                       </Badge>
                     </IconButton>
                   }
-                  {allNotifications.length == 0 ? (
+                  {allNotifications.length === 0 ? (
                     <Notifications
                       openNotifications={openNotifications}
                       anchorNotifications={anchorNotifications}
                       setAnchorNotifications={setAnchorNotifications}
                       data={allNotifications}
                     />
-                  ) : ''}
-
+                  ) : (
+                    ""
+                  )}
 
                   {/* AVATAR PROFILE */}
                   <IconButton
@@ -1060,6 +1054,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     PaperProps={{
                       elevation: 0,
                       sx: {
+                        maxWidth: "250px",
                         overflow: "visible",
                         filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
                         mt: 1.5,
@@ -1097,6 +1092,8 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                       sx={{
                         width: "initial !important",
                         textTransform: "capitalize",
+                        overflowWrap: "anywhere",
+                        whiteSpace: "break-spaces",
                       }}
                     >
                       <RenderAvatar
@@ -1107,7 +1104,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                           marginRight: 15,
                         }}
                       />
-                      {myProfile.name}
+                      {myProfile.name.length > 40 ? `${myProfile.name.substring(0, 40)}...` : myProfile.name}
                     </MenuItem>
                     <Divider />
 
@@ -1136,10 +1133,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
             </section>
           </>
         )}
-
-
-
-
       </HeaderInStyle>
     </HeaderProvider>
   );
