@@ -3,9 +3,10 @@ import { MenuItem, Stack, Avatar, Typography } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { defineLinks } from "../../utils/functions";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
+import { NotificationProps } from "../../interfaces/Notification";
 
 interface IProps {
-  notification: any;
+  notification: NotificationProps;
   url: string;
 }
 
@@ -46,6 +47,7 @@ export const NotificationContainer: React.FC<IProps> = ({ notification, url, chi
         whiteSpace: "normal",
         paddingTop: "10px",
         paddingBottom: "10px",
+        backgroundColor: notification.saw ? "initial" : "#EEEEEE",
       }}
       component="a"
       href={url}

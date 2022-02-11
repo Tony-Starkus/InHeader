@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   IconButton,
   Avatar,
@@ -14,29 +14,29 @@ import {
   Box,
   ClickAwayListener,
   Icon,
-} from "@mui/material";
-import { Settings } from "@mui/icons-material";
-import ExitToApp from "@mui/icons-material/ExitToApp";
-import AppsIcon from "@mui/icons-material/Apps";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import Autocomplete from "@mui/material/Autocomplete";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import WorkIcon from "@mui/icons-material/Work";
+} from '@mui/material';
+import { Settings } from '@mui/icons-material';
+import ExitToApp from '@mui/icons-material/ExitToApp';
+import AppsIcon from '@mui/icons-material/Apps';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
+import Autocomplete from '@mui/material/Autocomplete';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import WorkIcon from '@mui/icons-material/Work';
 
-import HeaderProvider from "./Context/HeaderContext";
-import Notifications from "./Notifications/notifications";
-import { HeaderInStyle } from "./styles";
+import HeaderProvider from './Context/HeaderContext';
+import Notifications from './Notifications/notifications';
+import { HeaderInStyle } from './styles';
 
-import { defineLinks } from "./utils/functions";
-import maxLetters from "./utils/maxLettes";
-import { SearchPersons } from "./utils/types";
-import RenderPerson from "./RenderPerson/RenderPerson";
-import { User } from "./interfaces/User";
-import { MeProps } from "./interfaces/Me";
-import RenderAvatar from "./RenderImage/RenderAvatar";
+import { defineLinks } from './utils/functions';
+import maxLetters from './utils/maxLettes';
+import { SearchPersons } from './utils/types';
+import RenderPerson from './RenderPerson/RenderPerson';
+import { User } from './interfaces/User';
+import { MeProps } from './interfaces/Me';
+import RenderAvatar from './RenderImage/RenderAvatar';
 interface props {
   user: User;
   profiles: MeProps;
@@ -47,31 +47,37 @@ interface props {
   signOut: Function;
 }
 
-export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api, production, noAvatar, signOut }) => {
-  const baseNotifications = production
-    ? "https://notifications.incicle.com/api/v1/"
-    : "https://notifications-stage.incicle.com/api/v1/";
-
+export const InHeader: React.FC<props> = ({
+  user,
+  profiles,
+  companySelected,
+  api,
+  production,
+  noAvatar,
+  signOut,
+}) => {
   useEffect(() => {
-    const contentSideBarElement = document.querySelector(".contentSidebar > div") as any;
+    const contentSideBarElement = document.querySelector(
+      '.contentSidebar > div'
+    ) as any;
 
     const handleResize = () => {
       if (contentSideBarElement) {
         if (window.innerWidth < 800) {
-          contentSideBarElement!.style.display = "none";
+          contentSideBarElement!.style.display = 'none';
           return;
         }
 
-        contentSideBarElement!.style.display = "initial";
+        contentSideBarElement!.style.display = 'initial';
       }
     };
 
     handleResize();
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -79,7 +85,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   const [resultPerson, setResultPerson] = useState([] as SearchPersons[]);
   const [hasResult, setHasResult] = useState(false);
   const [companies, setCompanies] = useState<any[]>([]);
-  const [accountType, setAccountType] = useState("");
+  const [accountType, setAccountType] = useState('');
   const [selectedCompany, setSelectedCompany] = useState<any>();
   const links = defineLinks(production);
 
@@ -92,35 +98,30 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
   const [anchorNotifications, setAnchorNotifications] = useState(null);
   const openNotifications = Boolean(anchorNotifications);
 
-  const [allNotifications, setAllNotifications] = useState([]) as any;
+  // @ts-ignore
   const [hasNewNotifications, setHasNewNotifications] = useState(false);
-  const [inputBoxClassName, setInputBoxClassName] = useState("");
+  const [inputBoxClassName, setInputBoxClassName] = useState('');
   const [showModules, setShowModules] = useState(false);
-
-  useEffect(() => {
-    if (anchorNotifications) {
-      api.get(`${baseNotifications}notifications/me/?page=${1}&size=${10}`).then((response: any) => {
-        setAllNotifications(response.data);
-        if (response.unread > 0) {
-          setHasNewNotifications(true);
-        }
-      });
-    }
-  }, [anchorNotifications]);
 
   useEffect(() => {
     setMyProfile(profiles);
   }, [profiles]);
 
   useEffect(() => {
-    if (myProfile.type === "PERSON") {
-      setAccountType("PERSON");
+    if (myProfile.type === 'PERSON') {
+      setAccountType('PERSON');
       if (myProfile.companies.length > 0) {
-        const companysIds = myProfile.companies.map((pos: any) => pos.id) as string[];
+        const companysIds = myProfile.companies.map(
+          (pos: any) => pos.id
+        ) as string[];
 
         if (companySelected && companysIds.includes(companySelected)) {
           const localCompanySelected =
-            myProfile.companies[myProfile.companies.findIndex((pos: any) => pos.id === companySelected)];
+            myProfile.companies[
+              myProfile.companies.findIndex(
+                (pos: any) => pos.id === companySelected
+              )
+            ];
           setSelectedCompany(localCompanySelected);
         } else {
           setSelectedCompany(myProfile.companies[0]);
@@ -138,7 +139,11 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
     setHasResult(false);
     if (username.trim().length >= 3) {
       api
-        .get(`${defineLinks(production).api.social}profile/name/search?search=${username}`)
+        .get(
+          `${
+            defineLinks(production).api.social
+          }profile/name/search?search=${username}`
+        )
         .then((response: any) => {
           setResultPerson(response?.data);
           setHasResult(true);
@@ -174,7 +179,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
 
   function changeChipContent(index: number) {
     const company = companies[index];
-    localStorage.setItem("companySelected", company.id);
+    localStorage.setItem('companySelected', company.id);
     window.location.reload();
   }
 
@@ -183,34 +188,35 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
       <Avatar
         alt={selectedCompany.name}
         sx={{
-          width: "24px !important",
-          height: "24px !important",
-          marginLeft: "2px !important",
-          marginRight: "1px !important",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          width: '24px !important',
+          height: '24px !important',
+          marginLeft: '2px !important',
+          marginRight: '1px !important',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <WorkIcon sx={{ width: "62%" }} />
+        <WorkIcon sx={{ width: '62%' }} />
       </Avatar>
     );
   };
 
   useEffect(() => {
     function handleResize() {
-      if (window.innerWidth > 1200 && inputBoxClassName.length) setInputBoxClassName("");
+      if (window.innerWidth > 1200 && inputBoxClassName.length)
+        setInputBoxClassName('');
     }
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   const handleClick = () => {
-    setShowModules(prev => !prev);
+    setShowModules((prev) => !prev);
   };
 
   const handleClickAway = () => {
@@ -236,59 +242,72 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
         {window.innerWidth > 670 ? (
           <>
             <section className="incicleheader-content">
-              <nav style={{ alignItems: "center", display: "flex" }}>
+              <nav style={{ alignItems: 'center', display: 'flex' }}>
                 {/* LOGO ICON */}
                 <Link
                   href={`${links.web?.social}`}
                   sx={{
-                    alignItems: "center",
-                    display: "flex",
-                    marginRight: "8px",
-                    marginLeft: "15px",
-                    paddingBottom: "2px",
+                    alignItems: 'center',
+                    display: 'flex',
+                    marginRight: '8px',
+                    marginLeft: '15px',
+                    paddingBottom: '2px',
                   }}
                 >
-                  <img src="https://static-incicle.s3.amazonaws.com/logo_incicle.svg" className="logo" alt="logo" />
+                  <img
+                    src="https://static-incicle.s3.amazonaws.com/logo_incicle.svg"
+                    className="logo"
+                    alt="logo"
+                  />
                 </Link>
 
                 {/* MODULOS MENU */}
-                <Stack spacing={0} direction="row" className="incicleheader-modules" sx={{ alignItems: "center" }}>
-                  <div className={`incicleheader-modules-content original ${showModules ? "view" : ""}`}>
+                <Stack
+                  spacing={0}
+                  direction="row"
+                  className="incicleheader-modules"
+                  sx={{ alignItems: 'center' }}
+                >
+                  <div
+                    className={`incicleheader-modules-content original ${
+                      showModules ? 'view' : ''
+                    }`}
+                  >
                     {[
                       {
-                        text: "Feed",
+                        text: 'Feed',
                         link: links.web?.social,
                       },
                       {
-                        text: "Agenda",
+                        text: 'Agenda',
                         link: links.web?.schedule,
                       },
                       {
-                        text: "Projetos",
+                        text: 'Projetos',
                         link: links.web?.project,
                       },
                       {
-                        text: "Feedbacks",
+                        text: 'Feedbacks',
                         link: `${links.web?.social}feedback`,
                       },
                     ].map((anchor: any) => {
-                      if (anchor.text === "Projetos") {
-                        if (user.type === "PERSON") {
+                      if (anchor.text === 'Projetos') {
+                        if (user.type === 'PERSON') {
                           return (
                             <Link
                               key={`${anchor.text}`}
                               href={`${anchor.link}`}
                               underline="none"
                               sx={{
-                                p: "6px 8px",
-                                color: "#747474",
-                                borderRadius: "3px",
-                                "&:hover": {
-                                  background: "#f2f3f5",
+                                p: '6px 8px',
+                                color: '#747474',
+                                borderRadius: '3px',
+                                '&:hover': {
+                                  background: '#f2f3f5',
                                 },
-                                "&:active": {
+                                '&:active': {
                                   fontWeight: 600,
-                                  color: "#007fa1",
+                                  color: '#007fa1',
                                 },
                               }}
                             >
@@ -303,15 +322,15 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                             href={`${anchor.link}`}
                             underline="none"
                             sx={{
-                              p: "6px 8px",
-                              color: "#747474",
-                              borderRadius: "3px",
-                              "&:hover": {
-                                background: "#f2f3f5",
+                              p: '6px 8px',
+                              color: '#747474',
+                              borderRadius: '3px',
+                              '&:hover': {
+                                background: '#f2f3f5',
                               },
-                              "&:active": {
+                              '&:active': {
                                 fontWeight: 600,
-                                color: "#007fa1",
+                                color: '#007fa1',
                               },
                             }}
                           >
@@ -323,59 +342,89 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     })}
                   </div>
 
-                  <label className="incicleheader-modules-label" htmlFor="incicleheader-modules-checkbox">
-                    <IconButton onClick={() => setShowModules(oldShowModules => !oldShowModules)}>
-                      <AppsIcon sx={{ width: "24px !important", height: "24px !important" }} />
+                  <label
+                    className="incicleheader-modules-label"
+                    htmlFor="incicleheader-modules-checkbox"
+                  >
+                    <IconButton
+                      onClick={() =>
+                        setShowModules((oldShowModules) => !oldShowModules)
+                      }
+                    >
+                      <AppsIcon
+                        sx={{
+                          width: '24px !important',
+                          height: '24px !important',
+                        }}
+                      />
                     </IconButton>
                   </label>
                   {showModules && (
-                    <ClickAwayListener {...{ onClickAway: () => showModules && setShowModules(false) }}>
-                      <div className={`incicleheader-modules-content toggle ${showModules ? "view" : ""}`}>
+                    <ClickAwayListener
+                      {...{
+                        onClickAway: () => showModules && setShowModules(false),
+                      }}
+                    >
+                      <div
+                        className={`incicleheader-modules-content toggle ${
+                          showModules ? 'view' : ''
+                        }`}
+                      >
                         {[
                           {
-                            text: "Feed",
+                            text: 'Feed',
                             link: links.web?.social,
-                            icon: "https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg",
-                          },
-                          {
-                            text: "Agenda",
-                            link: links.web?.schedule,
-                            icon: "https://social.incicle.com/static/media/IconSchedule.9195d460.svg",
-                          },
-                          {
-                            text: "Projetos",
-                            link: links.web?.project,
-                            icon: "https://social.incicle.com/static/media/IconProjects.72b93d23.svg",
-                          },
-                          {
-                            text: "Feedbacks",
-                            link: `${links.web?.social}feedback`,
-                            icon: "https://social.incicle.com/static/media/feedback-icon.5128afb5.svg",
-                          },
-                          {
-                            text: "Gestão por competência",
-                            link: user.type === "PERSON" ? `${links.web.competency}/user_view` : links.web.competency,
                             icon:
-                              "https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg",
+                              'https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg',
                           },
-                        ].map(anchor => {
-                          if (anchor.text === "Projetos") {
-                            if (user.type === "PERSON") {
+                          {
+                            text: 'Agenda',
+                            link: links.web?.schedule,
+                            icon:
+                              'https://social.incicle.com/static/media/IconSchedule.9195d460.svg',
+                          },
+                          {
+                            text: 'Projetos',
+                            link: links.web?.project,
+                            icon:
+                              'https://social.incicle.com/static/media/IconProjects.72b93d23.svg',
+                          },
+                          {
+                            text: 'Feedbacks',
+                            link: `${links.web?.social}feedback`,
+                            icon:
+                              'https://social.incicle.com/static/media/feedback-icon.5128afb5.svg',
+                          },
+                          {
+                            text: 'Gestão por competência',
+                            link:
+                              user.type === 'PERSON'
+                                ? `${links.web.competency}/user_view`
+                                : links.web.competency,
+                            icon:
+                              'https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg',
+                          },
+                        ].map((anchor) => {
+                          if (anchor.text === 'Projetos') {
+                            if (user.type === 'PERSON') {
                               return (
                                 <IconButton
                                   key={anchor.text}
                                   sx={{
-                                    justifyContent: "flex-start",
-                                    height: "max-content",
-                                    borderRadius: "0 !important",
-                                    fontSize: "18px",
+                                    justifyContent: 'flex-start',
+                                    height: 'max-content',
+                                    borderRadius: '0 !important',
+                                    fontSize: '18px',
                                   }}
                                 >
                                   <Icon>
                                     <img
                                       src={anchor.icon}
                                       alt={anchor.text}
-                                      style={{ width: "24px !important", height: "24px !important" }}
+                                      style={{
+                                        width: '24px !important',
+                                        height: '24px !important',
+                                      }}
                                     />
                                   </Icon>
                                   <Link
@@ -383,15 +432,15 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                                     href={`${anchor.link}`}
                                     underline="none"
                                     sx={{
-                                      p: "6px 8px",
-                                      color: "#747474",
-                                      borderRadius: "3px",
-                                      "&:hover": {
-                                        background: "#f2f3f5",
+                                      p: '6px 8px',
+                                      color: '#747474',
+                                      borderRadius: '3px',
+                                      '&:hover': {
+                                        background: '#f2f3f5',
                                       },
-                                      "&:active": {
+                                      '&:active': {
                                         fontWeight: 600,
-                                        color: "#007fa1",
+                                        color: '#007fa1',
                                       },
                                     }}
                                   >
@@ -404,17 +453,20 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                             return (
                               <IconButton
                                 sx={{
-                                  justifyContent: "flex-start",
-                                  height: "max-content",
-                                  borderRadius: "0 !important",
-                                  fontSize: "18px",
+                                  justifyContent: 'flex-start',
+                                  height: 'max-content',
+                                  borderRadius: '0 !important',
+                                  fontSize: '18px',
                                 }}
                               >
                                 <Icon>
                                   <img
                                     src={anchor.icon}
                                     alt={anchor.text}
-                                    style={{ width: "24px !important", height: "24px !important" }}
+                                    style={{
+                                      width: '24px !important',
+                                      height: '24px !important',
+                                    }}
                                   />
                                 </Icon>
                                 <Link
@@ -422,15 +474,15 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                                   href={`${anchor.link}`}
                                   underline="none"
                                   sx={{
-                                    p: "6px 8px",
-                                    color: "#747474",
-                                    borderRadius: "3px",
-                                    "&:hover": {
-                                      background: "#f2f3f5",
+                                    p: '6px 8px',
+                                    color: '#747474',
+                                    borderRadius: '3px',
+                                    '&:hover': {
+                                      background: '#f2f3f5',
                                     },
-                                    "&:active": {
+                                    '&:active': {
                                       fontWeight: 600,
-                                      color: "#007fa1",
+                                      color: '#007fa1',
                                     },
                                   }}
                                 >
@@ -450,20 +502,28 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
 
             <section className="incicleheader-content flex-end">
               <nav>
-                <Stack spacing={1} direction="row" sx={{ justifyContent: "flex-end", alignItems: "center" }}>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  sx={{ justifyContent: 'flex-end', alignItems: 'center' }}
+                >
                   {/* COMPANIES */}
                   <div className="incicleheader-companies">
-                    {companies.length > 0 && accountType === "PERSON" && (
+                    {companies.length > 0 && accountType === 'PERSON' && (
                       <Chip
                         onClick={handleOpenMenuCompanys}
                         size="small"
                         clickable
                         avatar={companiesAvatar()}
-                        label={<span style={{ fontSize: "13px" }}>{maxLetters(selectedCompany.name, 200)}</span>}
+                        label={
+                          <span style={{ fontSize: '13px' }}>
+                            {maxLetters(selectedCompany.name, 200)}
+                          </span>
+                        }
                         onDelete={handleOpenMenuCompanys}
                         deleteIcon={<ArrowDropDownIcon />}
                         variant="outlined"
-                        sx={{ padding: "2px !important", height: "32px" }}
+                        sx={{ padding: '2px !important', height: '32px' }}
                       />
                     )}
                     <Menu
@@ -474,43 +534,49 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                       PaperProps={{
                         elevation: 0,
                         sx: {
-                          overflow: "visible",
-                          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                          overflow: 'visible',
+                          filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                           mt: 1.5,
-                          "& .MuiAvatar-root": {
+                          '& .MuiAvatar-root': {
                             width: 32,
                             height: 32,
                             ml: -0.5,
                             mr: 1,
                           },
 
-                          "&:before": {
+                          '&:before': {
                             content: '""',
-                            display: "block",
-                            position: "absolute",
+                            display: 'block',
+                            position: 'absolute',
                             top: 0,
                             right: 14,
                             width: 10,
                             height: 10,
-                            bgcolor: "background.paper",
-                            transform: "translateY(-50%) rotate(45deg)",
+                            bgcolor: 'background.paper',
+                            transform: 'translateY(-50%) rotate(45deg)',
                             zIndex: 0,
                           },
-                          "& li, & a": {
+                          '& li, & a': {
                             fontFamily: '"Open Sans", sans-serif',
-                            fontSize: "12px",
+                            fontSize: '12px',
                           },
                         },
                       }}
-                      transformOrigin={{ horizontal: "right", vertical: "top" }}
-                      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                     >
                       {companies.map((company, index) => (
-                        <MenuItem key={`${company.id}`} component="li" onClick={() => changeChipContent(index)}>
+                        <MenuItem
+                          key={`${company.id}`}
+                          component="li"
+                          onClick={() => changeChipContent(index)}
+                        >
                           <Avatar alt={company.name}>
                             <WorkIcon />
                           </Avatar>
-                          <span style={{ padding: "0 !important" }}>{company.name}</span>
+                          <span style={{ padding: '0 !important' }}>
+                            {company.name}
+                          </span>
                         </MenuItem>
                       ))}
                     </Menu>
@@ -520,10 +586,19 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                   <Paper
                     elevation={0}
                     className="incicleheader-inputbutton"
-                    sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
                   >
-                    <IconButton onClick={() => setInputBoxClassName("view")}>
-                      <SearchIcon sx={{ width: "24px !important", height: "24px !important" }} />
+                    <IconButton onClick={() => setInputBoxClassName('view')}>
+                      <SearchIcon
+                        sx={{
+                          width: '24px !important',
+                          height: '24px !important',
+                        }}
+                      />
                     </IconButton>
                   </Paper>
 
@@ -532,15 +607,15 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     component="form"
                     className={`incicleheader-inputbox ${inputBoxClassName}`}
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      width: "100%",
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      width: '100%',
                       // width: 250,
-                      padding: "2px",
-                      border: "none",
-                      background: "#f2f3f5",
-                      boxShadow: "none",
+                      padding: '2px',
+                      border: 'none',
+                      background: '#f2f3f5',
+                      boxShadow: 'none',
                     }}
                     ref={anchorRef}
                   >
@@ -549,28 +624,35 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                       open={hasResult}
                       noOptionsText="Nenhum resultado encontrado"
                       sx={{
-                        "& input": {
-                          background: "none",
-                          border: "none",
-                          outline: "none",
+                        '& input': {
+                          background: 'none',
+                          border: 'none',
+                          outline: 'none',
                         },
                       }}
-                      renderInput={params => (
+                      renderInput={(params) => (
                         <Box
                           ref={params.InputProps.ref}
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginLeft: "12px",
-                            "& input::placeholder": {
-                              color: "#ddd !important",
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginLeft: '12px',
+                            '& input::placeholder': {
+                              color: '#ddd !important',
                             },
                           }}
                         >
                           {inputBoxClassName && (
                             <>
-                              <IconButton onClick={() => setInputBoxClassName("")}>
-                                <CloseIcon sx={{ width: "16px !important", height: "16px !important" }} />
+                              <IconButton
+                                onClick={() => setInputBoxClassName('')}
+                              >
+                                <CloseIcon
+                                  sx={{
+                                    width: '16px !important',
+                                    height: '16px !important',
+                                  }}
+                                />
                               </IconButton>
                             </>
                           )}
@@ -580,36 +662,64 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                             className="incicleheader-inputsearch"
                             placeholder="Encontre alguém na InCicle"
                             style={{
-                              fontSize: "14px",
+                              fontSize: '14px',
                             }}
                           />
                         </Box>
                       )}
                       renderOption={(propss, person) => {
-                        return <RenderPerson liProps={propss} person={person} noAvatar={noAvatar || ""} />;
+                        return (
+                          <RenderPerson
+                            liProps={propss}
+                            person={person}
+                            noAvatar={noAvatar || ''}
+                          />
+                        );
                       }}
                       getOptionLabel={(option: any) => option.name}
                       // @ts-ignore-next-line
-                      onInputChange={(e, value: string) => searchFunction(value)}
+                      onInputChange={(e, value: string) =>
+                        searchFunction(value)
+                      }
                       fullWidth
                     />
 
-                    <IconButton type="submit" sx={{ p: "6px" }} aria-label="search">
+                    <IconButton
+                      type="submit"
+                      sx={{ p: '6px' }}
+                      aria-label="search"
+                    >
                       <SearchIcon
-                        sx={{ width: "24px !important", height: "24px !important", color: "#747474 !important" }}
+                        sx={{
+                          width: '24px !important',
+                          height: '24px !important',
+                          color: '#747474 !important',
+                        }}
                       />
                     </IconButton>
                   </Paper>
 
                   {/* FRIENDS */}
-                  <IconButton size="medium" sx={{ width: 35, height: 35 }} href={`${links.web?.social}friends`}>
+                  <IconButton
+                    size="medium"
+                    sx={{ width: 35, height: 35 }}
+                    href={`${links.web?.social}friends`}
+                  >
                     <PeopleAltIcon sx={{ width: 25, height: 25 }} />
                   </IconButton>
 
                   {/* NOTIFICATIONS AREA */}
                   {
-                    <IconButton size="medium" sx={{ width: 35, height: 35 }} onClick={showNotifications}>
-                      <Badge color="primary" invisible={!hasNewNotifications} variant="dot">
+                    <IconButton
+                      size="medium"
+                      sx={{ width: 35, height: 35 }}
+                      onClick={showNotifications}
+                    >
+                      <Badge
+                        color="primary"
+                        invisible={!hasNewNotifications}
+                        variant="dot"
+                      >
                         <NotificationsIcon sx={{ width: 25, height: 25 }} />
                       </Badge>
                     </IconButton>
@@ -618,7 +728,6 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     openNotifications={openNotifications}
                     anchorNotifications={anchorNotifications}
                     setAnchorNotifications={setAnchorNotifications}
-                    data={allNotifications}
                   />
 
                   {/* AVATAR PROFILE */}
@@ -628,7 +737,10 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     size="small"
                     style={{ marginRight: 15 }}
                   >
-                    <RenderAvatar sx={{ width: 35, height: 35 }} src={profiles?.avatar} />
+                    <RenderAvatar
+                      sx={{ width: 35, height: 35 }}
+                      src={profiles?.avatar}
+                    />
                   </IconButton>
                   <Menu
                     anchorEl={anchorProfileEl}
@@ -638,53 +750,53 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     PaperProps={{
                       elevation: 0,
                       sx: {
-                        overflow: "visible",
-                        maxWidth: "250px",
-                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                        overflow: 'visible',
+                        maxWidth: '250px',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                         mt: 1.5,
-                        "& .MuiAvatar-root": {
+                        '& .MuiAvatar-root': {
                           width: 32,
                           height: 32,
                           ml: -0.5,
                           mr: 1,
                         },
 
-                        "&:before": {
+                        '&:before': {
                           content: '""',
-                          display: "block",
-                          position: "absolute",
+                          display: 'block',
+                          position: 'absolute',
                           top: 0,
                           right: 14,
                           width: 10,
                           height: 10,
-                          bgcolor: "background.paper",
-                          transform: "translateY(-50%) rotate(45deg)",
+                          bgcolor: 'background.paper',
+                          transform: 'translateY(-50%) rotate(45deg)',
                           zIndex: 0,
                         },
-                        "& li, & a": {
+                        '& li, & a': {
                           fontFamily: '"Open Sans", sans-serif',
-                          fontSize: "13px",
+                          fontSize: '13px',
                         },
                       },
                     }}
-                    transformOrigin={{ horizontal: "right", vertical: "top" }}
-                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                   >
                     <MenuItem
                       component="a"
                       href={`${links.web.social}p/${myProfile.username}`}
                       sx={{
-                        width: "initial !important",
-                        textTransform: "capitalize",
-                        overflowWrap: "anywhere",
-                        whiteSpace: "break-spaces",
+                        width: 'initial !important',
+                        textTransform: 'capitalize',
+                        overflowWrap: 'anywhere',
+                        whiteSpace: 'break-spaces',
                       }}
                     >
                       <RenderAvatar
                         src={profiles?.avatar}
                         sx={{
-                          width: "32px !important",
-                          height: "32px !important",
+                          width: '32px !important',
+                          height: '32px !important',
                           marginRight: 15,
                         }}
                       />
@@ -693,7 +805,10 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                         : myProfile.name}
                     </MenuItem>
                     <Divider />
-                    <MenuItem component="a" href={`${links.web.social}settings`}>
+                    <MenuItem
+                      component="a"
+                      href={`${links.web.social}settings`}
+                    >
                       <ListItemIcon>
                         <Settings fontSize="small" />
                       </ListItemIcon>
@@ -713,45 +828,54 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
         ) : (
           <>
             <section className="incicleheader-content">
-              <nav style={{ alignItems: "center", display: "flex" }}>
+              <nav style={{ alignItems: 'center', display: 'flex' }}>
                 {/* MODULOS MENU */}
-                <Stack spacing={0} direction="row" className="incicleheader-modules" sx={{ alignItems: "center" }}>
-                  <div className={`incicleheader-modules-content original ${showModules ? "view" : ""}`}>
+                <Stack
+                  spacing={0}
+                  direction="row"
+                  className="incicleheader-modules"
+                  sx={{ alignItems: 'center' }}
+                >
+                  <div
+                    className={`incicleheader-modules-content original ${
+                      showModules ? 'view' : ''
+                    }`}
+                  >
                     {[
                       {
-                        text: "Feed",
+                        text: 'Feed',
                         link: links.web?.social,
                       },
                       {
-                        text: "Agenda",
+                        text: 'Agenda',
                         link: links.web?.schedule,
                       },
                       {
-                        text: "Projetos",
+                        text: 'Projetos',
                         link: links.web?.project,
                       },
                       {
-                        text: "Feedbacks",
+                        text: 'Feedbacks',
                         link: `${links.web?.social}feedback`,
                       },
                     ].map((anchor: any) => {
-                      if (anchor.text === "Projetos") {
-                        if (user.type === "PERSON") {
+                      if (anchor.text === 'Projetos') {
+                        if (user.type === 'PERSON') {
                           return (
                             <Link
                               key={`${anchor.text}`}
                               href={`${anchor.link}`}
                               underline="none"
                               sx={{
-                                p: "6px 8px",
-                                color: "#747474",
-                                borderRadius: "3px",
-                                "&:hover": {
-                                  background: "#f2f3f5",
+                                p: '6px 8px',
+                                color: '#747474',
+                                borderRadius: '3px',
+                                '&:hover': {
+                                  background: '#f2f3f5',
                                 },
-                                "&:active": {
+                                '&:active': {
                                   fontWeight: 600,
-                                  color: "#007fa1",
+                                  color: '#007fa1',
                                 },
                               }}
                             >
@@ -766,15 +890,15 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                             href={`${anchor.link}`}
                             underline="none"
                             sx={{
-                              p: "6px 8px",
-                              color: "#747474",
-                              borderRadius: "3px",
-                              "&:hover": {
-                                background: "#f2f3f5",
+                              p: '6px 8px',
+                              color: '#747474',
+                              borderRadius: '3px',
+                              '&:hover': {
+                                background: '#f2f3f5',
                               },
-                              "&:active": {
+                              '&:active': {
                                 fontWeight: 600,
-                                color: "#007fa1",
+                                color: '#007fa1',
                               },
                             }}
                           >
@@ -786,57 +910,80 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     })}
                   </div>
 
-                  <ClickAwayListener onClickAway={handleClickAway} mouseEvent="onMouseDown" touchEvent="onTouchStart">
+                  <ClickAwayListener
+                    onClickAway={handleClickAway}
+                    mouseEvent="onMouseDown"
+                    touchEvent="onTouchStart"
+                  >
                     <>
                       <IconButton onClick={handleClick}>
-                        <AppsIcon sx={{ width: "24px !important", height: "24px !important" }} />
+                        <AppsIcon
+                          sx={{
+                            width: '24px !important',
+                            height: '24px !important',
+                          }}
+                        />
                       </IconButton>
                       {showModules ? (
-                        <div className={`incicleheader-modules-content toggle ${showModules ? "view" : ""}`}>
+                        <div
+                          className={`incicleheader-modules-content toggle ${
+                            showModules ? 'view' : ''
+                          }`}
+                        >
                           {[
                             {
-                              text: "Feed",
+                              text: 'Feed',
                               link: links.web?.social,
-                              icon: "https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg",
-                            },
-                            {
-                              text: "Agenda",
-                              link: links.web?.schedule,
-                              icon: "https://social.incicle.com/static/media/IconSchedule.9195d460.svg",
-                            },
-                            {
-                              text: "Projetos",
-                              link: links.web?.project,
-                              icon: "https://social.incicle.com/static/media/IconProjects.72b93d23.svg",
-                            },
-                            {
-                              text: "Feedbacks",
-                              link: `${links.web?.social}feedback`,
-                              icon: "https://social.incicle.com/static/media/feedback-icon.5128afb5.svg",
-                            },
-                            {
-                              text: "Gestão por competência",
-                              link: user.type === "PERSON" ? `${links.web.competency}/user_view` : links.web.competency,
                               icon:
-                                "https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg",
+                                'https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg',
                             },
-                          ].map(anchor => {
-                            if (anchor.text === "Projetos") {
-                              if (user.type === "PERSON") {
+                            {
+                              text: 'Agenda',
+                              link: links.web?.schedule,
+                              icon:
+                                'https://social.incicle.com/static/media/IconSchedule.9195d460.svg',
+                            },
+                            {
+                              text: 'Projetos',
+                              link: links.web?.project,
+                              icon:
+                                'https://social.incicle.com/static/media/IconProjects.72b93d23.svg',
+                            },
+                            {
+                              text: 'Feedbacks',
+                              link: `${links.web?.social}feedback`,
+                              icon:
+                                'https://social.incicle.com/static/media/feedback-icon.5128afb5.svg',
+                            },
+                            {
+                              text: 'Gestão por competência',
+                              link:
+                                user.type === 'PERSON'
+                                  ? `${links.web.competency}/user_view`
+                                  : links.web.competency,
+                              icon:
+                                'https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg',
+                            },
+                          ].map((anchor) => {
+                            if (anchor.text === 'Projetos') {
+                              if (user.type === 'PERSON') {
                                 return (
                                   <IconButton
                                     sx={{
-                                      justifyContent: "flex-start",
-                                      height: "max-content",
-                                      borderRadius: "0 !important",
-                                      fontSize: "18px",
+                                      justifyContent: 'flex-start',
+                                      height: 'max-content',
+                                      borderRadius: '0 !important',
+                                      fontSize: '18px',
                                     }}
                                   >
                                     <Icon>
                                       <img
                                         src={anchor.icon}
                                         alt={anchor.text}
-                                        style={{ width: "24px !important", height: "24px !important" }}
+                                        style={{
+                                          width: '24px !important',
+                                          height: '24px !important',
+                                        }}
                                       />
                                     </Icon>
                                     <Link
@@ -844,15 +991,15 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                                       href={`${anchor.link}`}
                                       underline="none"
                                       sx={{
-                                        p: "6px 8px",
-                                        color: "#747474",
-                                        borderRadius: "3px",
-                                        "&:hover": {
-                                          background: "#f2f3f5",
+                                        p: '6px 8px',
+                                        color: '#747474',
+                                        borderRadius: '3px',
+                                        '&:hover': {
+                                          background: '#f2f3f5',
                                         },
-                                        "&:active": {
+                                        '&:active': {
                                           fontWeight: 600,
-                                          color: "#007fa1",
+                                          color: '#007fa1',
                                         },
                                       }}
                                     >
@@ -865,17 +1012,20 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                               return (
                                 <IconButton
                                   sx={{
-                                    justifyContent: "flex-start",
-                                    height: "max-content",
-                                    borderRadius: "0 !important",
-                                    fontSize: "18px",
+                                    justifyContent: 'flex-start',
+                                    height: 'max-content',
+                                    borderRadius: '0 !important',
+                                    fontSize: '18px',
                                   }}
                                 >
                                   <Icon>
                                     <img
                                       src={anchor.icon}
                                       alt={anchor.text}
-                                      style={{ width: "24px !important", height: "24px !important" }}
+                                      style={{
+                                        width: '24px !important',
+                                        height: '24px !important',
+                                      }}
                                     />
                                   </Icon>
                                   <Link
@@ -883,15 +1033,15 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                                     href={`${anchor.link}`}
                                     underline="none"
                                     sx={{
-                                      p: "6px 8px",
-                                      color: "#747474",
-                                      borderRadius: "3px",
-                                      "&:hover": {
-                                        background: "#f2f3f5",
+                                      p: '6px 8px',
+                                      color: '#747474',
+                                      borderRadius: '3px',
+                                      '&:hover': {
+                                        background: '#f2f3f5',
                                       },
-                                      "&:active": {
+                                      '&:active': {
                                         fontWeight: 600,
-                                        color: "#007fa1",
+                                        color: '#007fa1',
                                       },
                                     }}
                                   >
@@ -904,7 +1054,7 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                           })}
                         </div>
                       ) : (
-                        ""
+                        ''
                       )}
                     </>
                   </ClickAwayListener>
@@ -914,10 +1064,19 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                 <Paper
                   elevation={0}
                   className="incicleheader-inputbutton"
-                  sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
                 >
-                  <IconButton onClick={() => setInputBoxClassName("view")}>
-                    <SearchIcon sx={{ width: "24px !important", height: "24px !important" }} />
+                  <IconButton onClick={() => setInputBoxClassName('view')}>
+                    <SearchIcon
+                      sx={{
+                        width: '24px !important',
+                        height: '24px !important',
+                      }}
+                    />
                   </IconButton>
                 </Paper>
 
@@ -926,15 +1085,15 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                   component="form"
                   className={`incicleheader-inputbox ${inputBoxClassName}`}
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%',
                     // width: 250,
-                    padding: "2px",
-                    border: "none",
-                    background: "#f2f3f5",
-                    boxShadow: "none",
+                    padding: '2px',
+                    border: 'none',
+                    background: '#f2f3f5',
+                    boxShadow: 'none',
                   }}
                   ref={anchorRef}
                 >
@@ -943,28 +1102,35 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     open={hasResult}
                     noOptionsText="Nenhum resultado encontrado"
                     sx={{
-                      "& input": {
-                        background: "none",
-                        border: "none",
-                        outline: "none",
+                      '& input': {
+                        background: 'none',
+                        border: 'none',
+                        outline: 'none',
                       },
                     }}
-                    renderInput={params => (
+                    renderInput={(params) => (
                       <Box
                         ref={params.InputProps.ref}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          marginLeft: "12px",
-                          "& input::placeholder": {
-                            color: "#ddd !important",
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginLeft: '12px',
+                          '& input::placeholder': {
+                            color: '#ddd !important',
                           },
                         }}
                       >
                         {inputBoxClassName && (
                           <>
-                            <IconButton onClick={() => setInputBoxClassName("")}>
-                              <CloseIcon sx={{ width: "16px !important", height: "16px !important" }} />
+                            <IconButton
+                              onClick={() => setInputBoxClassName('')}
+                            >
+                              <CloseIcon
+                                sx={{
+                                  width: '16px !important',
+                                  height: '16px !important',
+                                }}
+                              />
                             </IconButton>
                           </>
                         )}
@@ -974,13 +1140,19 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                           className="incicleheader-inputsearch"
                           placeholder="Encontre alguém na InCicle"
                           style={{
-                            fontSize: "14px",
+                            fontSize: '14px',
                           }}
                         />
                       </Box>
                     )}
                     renderOption={(propss, person) => {
-                      return <RenderPerson liProps={propss} person={person} noAvatar={noAvatar || ""} />;
+                      return (
+                        <RenderPerson
+                          liProps={propss}
+                          person={person}
+                          noAvatar={noAvatar || ''}
+                        />
+                      );
                     }}
                     getOptionLabel={(option: any) => option.name}
                     // @ts-ignore-next-line
@@ -988,9 +1160,17 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     fullWidth
                   />
 
-                  <IconButton type="submit" sx={{ p: "6px" }} aria-label="search">
+                  <IconButton
+                    type="submit"
+                    sx={{ p: '6px' }}
+                    aria-label="search"
+                  >
                     <SearchIcon
-                      sx={{ width: "24px !important", height: "24px !important", color: "#747474 !important" }}
+                      sx={{
+                        width: '24px !important',
+                        height: '24px !important',
+                        color: '#747474 !important',
+                      }}
                     />
                   </IconButton>
                 </Paper>
@@ -998,44 +1178,55 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
             </section>
 
             <section className="incicleheader-content center">
-              <nav style={{ alignItems: "center", display: "flex" }}>
+              <nav style={{ alignItems: 'center', display: 'flex' }}>
                 {/* LOGO ICON */}
                 <Link
                   href={`${links.web?.social}`}
                   sx={{
-                    alignItems: "center",
-                    display: "flex",
-                    marginRight: "8px",
-                    marginLeft: "15px",
-                    paddingBottom: "2px",
+                    alignItems: 'center',
+                    display: 'flex',
+                    marginRight: '8px',
+                    marginLeft: '15px',
+                    paddingBottom: '2px',
                   }}
                 >
-                  <img src="https://static-incicle.s3.amazonaws.com/logo_incicle.svg" className="logo" alt="logo" />
+                  <img
+                    src="https://static-incicle.s3.amazonaws.com/logo_incicle.svg"
+                    className="logo"
+                    alt="logo"
+                  />
                 </Link>
               </nav>
             </section>
 
             <section className="incicleheader-content flex-end">
               <nav>
-                <Stack spacing={1} direction="row" sx={{ justifyContent: "flex-end", alignItems: "center" }}>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  sx={{ justifyContent: 'flex-end', alignItems: 'center' }}
+                >
                   {/* NOTIFICATIONS AREA */}
                   {
-                    <IconButton size="medium" sx={{ width: 35, height: 35 }} onClick={showNotifications}>
-                      <Badge color="primary" invisible={!hasNewNotifications} variant="dot">
+                    <IconButton
+                      size="medium"
+                      sx={{ width: 35, height: 35 }}
+                      onClick={showNotifications}
+                    >
+                      <Badge
+                        color="primary"
+                        invisible={!hasNewNotifications}
+                        variant="dot"
+                      >
                         <NotificationsIcon sx={{ width: 25, height: 25 }} />
                       </Badge>
                     </IconButton>
                   }
-                  {allNotifications.length === 0 ? (
-                    <Notifications
-                      openNotifications={openNotifications}
-                      anchorNotifications={anchorNotifications}
-                      setAnchorNotifications={setAnchorNotifications}
-                      data={allNotifications}
-                    />
-                  ) : (
-                    ""
-                  )}
+                  <Notifications
+                    openNotifications={openNotifications}
+                    anchorNotifications={anchorNotifications}
+                    setAnchorNotifications={setAnchorNotifications}
+                  />
 
                   {/* AVATAR PROFILE */}
                   <IconButton
@@ -1044,7 +1235,10 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     size="small"
                     style={{ marginRight: 15 }}
                   >
-                    <RenderAvatar sx={{ width: 35, height: 35 }} src={profiles?.avatar} />
+                    <RenderAvatar
+                      sx={{ width: 35, height: 35 }}
+                      src={profiles?.avatar}
+                    />
                   </IconButton>
                   <Menu
                     anchorEl={anchorProfileEl}
@@ -1054,68 +1248,76 @@ export const InHeader: React.FC<props> = ({ user, profiles, companySelected, api
                     PaperProps={{
                       elevation: 0,
                       sx: {
-                        maxWidth: "250px",
-                        overflow: "visible",
-                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                        maxWidth: '250px',
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                         mt: 1.5,
-                        "& .MuiAvatar-root": {
+                        '& .MuiAvatar-root': {
                           width: 32,
                           height: 32,
                           ml: -0.5,
                           mr: 1,
                         },
 
-                        "&:before": {
+                        '&:before': {
                           content: '""',
-                          display: "block",
-                          position: "absolute",
+                          display: 'block',
+                          position: 'absolute',
                           top: 0,
                           right: 14,
                           width: 10,
                           height: 10,
-                          bgcolor: "background.paper",
-                          transform: "translateY(-50%) rotate(45deg)",
+                          bgcolor: 'background.paper',
+                          transform: 'translateY(-50%) rotate(45deg)',
                           zIndex: 0,
                         },
-                        "& li, & a": {
+                        '& li, & a': {
                           fontFamily: '"Open Sans", sans-serif',
-                          fontSize: "13px",
+                          fontSize: '13px',
                         },
                       },
                     }}
-                    transformOrigin={{ horizontal: "right", vertical: "top" }}
-                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                   >
                     <MenuItem
                       component="a"
                       href={`${links.web.social}p/${myProfile.username}`}
                       sx={{
-                        width: "initial !important",
-                        textTransform: "capitalize",
-                        overflowWrap: "anywhere",
-                        whiteSpace: "break-spaces",
+                        width: 'initial !important',
+                        textTransform: 'capitalize',
+                        overflowWrap: 'anywhere',
+                        whiteSpace: 'break-spaces',
                       }}
                     >
                       <RenderAvatar
                         src={profiles?.avatar}
                         sx={{
-                          width: "32px !important",
-                          height: "32px !important",
+                          width: '32px !important',
+                          height: '32px !important',
                           marginRight: 15,
                         }}
                       />
-                      {myProfile.name?.length > 40 ? `${myProfile.name.substring(0, 40)}...` : myProfile.name}
+                      {myProfile.name?.length > 40
+                        ? `${myProfile.name.substring(0, 40)}...`
+                        : myProfile.name}
                     </MenuItem>
                     <Divider />
 
                     {/* FRIENDS */}
-                    <MenuItem component="a" href={`${links.web?.social}friends`}>
+                    <MenuItem
+                      component="a"
+                      href={`${links.web?.social}friends`}
+                    >
                       <ListItemIcon>
                         <PeopleAltIcon fontSize="small" />
                       </ListItemIcon>
                       Conexões
                     </MenuItem>
-                    <MenuItem component="a" href={`${links.web.social}settings`}>
+                    <MenuItem
+                      component="a"
+                      href={`${links.web.social}settings`}
+                    >
                       <ListItemIcon>
                         <Settings fontSize="small" />
                       </ListItemIcon>

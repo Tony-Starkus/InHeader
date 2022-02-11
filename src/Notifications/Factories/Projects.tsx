@@ -1,7 +1,7 @@
 import React from "react";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 import { defineLinks } from "../../utils/functions";
-import { NotificationProps } from "../interfaces";
+import { NotificationProps } from "../../interfaces/Notification";
 import { NotificationContainer, NotificationContentText } from "./NotificationAbstract";
 
 interface Props {

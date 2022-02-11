@@ -3,6 +3,7 @@ import AWS from "aws-sdk";
 
 import { User } from "../interfaces/User";
 import { MeProps } from "../interfaces/Me";
+import { NotificationProps } from "../interfaces/Notification";
 
 export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 export type GetS3Object = (path: string) => Promise<string>;
@@ -16,11 +17,21 @@ export interface HeaderProviderProps {
   getS3Object: GetS3Object;
 }
 
+export interface NotificationsDataProps {
+  currentPage: number;
+  data: Array<NotificationProps>;
+  size: number;
+  total: number;
+  totalPage: number;
+}
+
 export interface HeaderContextProps extends HeaderProviderProps {
   setUser: SetState<User>;
   setProfiles: SetState<MeProps>;
   setCompanySelected: SetState<string>;
   setProduction: SetState<boolean>;
+  notificationsData: NotificationsDataProps;
+  setNotificationsData: SetState<NotificationsDataProps>;
 }
 
 export interface Props {
@@ -34,6 +45,13 @@ const HeaderProvider: React.FC<Props> = ({ children, value }) => {
   const [profiles, setProfiles] = useState(value.profiles);
   const [companySelected, setCompanySelected] = useState(value.companySelected);
   const [production, setProduction] = useState(value.production);
+  const [notificationsData, setNotificationsData] = useState<NotificationsDataProps>({
+    currentPage: 1,
+    data: [],
+    size: 0,
+    total: 0,
+    totalPage: 0,
+  });
   var bucket: string = value.production ? "bucket-incicle" : "bucket-incicle-stage";
 
   useEffect(() => {
@@ -99,6 +117,8 @@ const HeaderProvider: React.FC<Props> = ({ children, value }) => {
     setCompanySelected,
     production,
     setProduction,
+    notificationsData,
+    setNotificationsData,
     api: value.api,
     getS3Object: getS3Object,
   } as HeaderContextProps;

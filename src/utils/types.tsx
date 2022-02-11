@@ -3,7 +3,13 @@ export const incicleModules = {
   schedule: "schedule",
   feedback: "feedback",
   project: "project",
-  endomarketing: "endomarketing"
+  endomarketing: "endomarketing",
+};
+
+// Notification filter types
+export const notificationFilterType = {
+  ALL: "ALL",
+  UNREADED: "UNREADED",
 };
 
 export interface SearchPersons {

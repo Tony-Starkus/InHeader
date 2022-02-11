@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { defineLinks } from "../../utils/functions";
 import { NotificationContainer, NotificationContentText } from "./NotificationAbstract";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
+import { NotificationProps } from "../../interfaces/Notification";
 
 interface IProps {
-  notificationItem: any;
+  notificationItem: NotificationProps;
 }
 
 const notificationType = {

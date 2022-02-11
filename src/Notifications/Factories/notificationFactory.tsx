@@ -3,24 +3,24 @@ import SocialNetworkNotificationFactory from "./SocialNetwork";
 import FeedbackNotificationFactory from "./Feedback";
 import ScheduleNotificationFactory from "./Schedule";
 import EndomarketingNotificationFactory from "./Endomarketing";
-import { incicleModules } from "../../utils/types";
 import { ProjectsFactory } from "./Projects";
+import { NotificationProps, moduleTypes } from "../../interfaces/Notification";
 
-function createNotificationFactory(item: any) {
+function createNotificationFactory(item: NotificationProps) {
   switch (item.module) {
-    case incicleModules.social_network:
+    case moduleTypes.social_network:
       return <SocialNetworkNotificationFactory notificationItem={item} />;
 
-    case incicleModules.feedback:
+    case moduleTypes.feedback:
       return <FeedbackNotificationFactory notificationItem={item} />;
 
-    case incicleModules.schedule:
+    case moduleTypes.schedule:
       return <ScheduleNotificationFactory notificationItem={item} />;
 
-    case incicleModules.project:
+    case moduleTypes.project:
       return <ProjectsFactory notificationItem={item} />;
 
-    case incicleModules.endomarketing:
+    case moduleTypes.endomarketing:
       return <EndomarketingNotificationFactory notificationItem={item} />;
 
     default:

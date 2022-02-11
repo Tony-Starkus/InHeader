@@ -1,23 +1,195 @@
-import React, { useState } from "react";
-import { IconButton, ListItemIcon, Menu, MenuItem, Stack, Typography } from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import NotificationItem from "./notificationItem";
-import { ButtonNotification, NotificationWrapper } from "./style";
-import DoneIcon from "@mui/icons-material/Done";
-import ComputerIcon from "@mui/icons-material/Computer";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { Box } from "@mui/system";
+import React, { useEffect, useState } from 'react';
+import {
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from '@mui/material';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import NotificationItem from './notificationItem';
+import { ButtonNotification, NotificationWrapper } from './style';
+import DoneIcon from '@mui/icons-material/Done';
+import ComputerIcon from '@mui/icons-material/Computer';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { notificationFilterType } from '../utils/types';
+import { getNotifications } from '../utils/functions/notifications';
+import { useHeaderProvider } from '../hooks/useHeaderProvider';
+import { defineLinks } from '../utils/functions';
+
+import { moduleTypes } from '../interfaces/Notification';
 
 interface props {
   openNotifications: any;
   anchorNotifications: any;
   setAnchorNotifications: any;
-  data: any;
 }
 
-const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications, setAnchorNotifications, data }) => {
+const incicleModules = [
+  {
+    title: 'Todos',
+    slug: moduleTypes.all,
+    icon: 'https://static-incicle.s3.amazonaws.com/all.svg',
+  },
+  {
+    title: 'Agenda',
+    slug: moduleTypes.schedule,
+    icon: 'https://static-incicle.s3.amazonaws.com/agenda.svg',
+  },
+  {
+    title: 'Avaliação por competência',
+    slug: moduleTypes.evaluation360,
+    icon:
+      'https://static-incicle.s3.amazonaws.com/avaliacao-por-competencia.svg',
+  },
+  {
+    title: 'Departamento pessoal',
+    slug: moduleTypes.personal_department,
+    icon: 'https://static-incicle.s3.amazonaws.com/departamento-pessoal.svg',
+  },
+  {
+    title: 'Endomarketing',
+    slug: moduleTypes.endomarketing,
+    icon: 'https://static-incicle.s3.amazonaws.com/endo-marketing.svg',
+  },
+  {
+    title: 'Feedback',
+    slug: moduleTypes.feedback,
+    icon: 'https://static-incicle.s3.amazonaws.com/feedback.svg',
+  },
+  {
+    title: 'Projetos',
+    slug: moduleTypes.project,
+    icon: 'https://static-incicle.s3.amazonaws.com/projetos.svg',
+  },
+  {
+    title: 'Rede Social',
+    slug: moduleTypes.social_network,
+    icon: 'https://static-incicle.s3.amazonaws.com/rede-social.svg',
+  },
+  {
+    title: 'Engenharia Organizacional',
+    slug: moduleTypes.organizational_engineering,
+    icon:
+      'https://static-incicle.s3.amazonaws.com/engenharia-organizacional.svg',
+  },
+  // {
+  //   title: "Pesquisa de clima",
+  //   slug: moduleTypes.climate_research,
+  //   icon: "https://static-incicle.s3.amazonaws.com/pesquisa-de-clima.svg",
+  // },
+  // {
+  //   title: "Ouvidoria",
+  //   slug: moduleTypes.ombudsman,
+  //   icon: "https://static-incicle.s3.amazonaws.com/ouvidoria.svg",
+  // },
+];
+
+const Notifications: React.FC<props> = ({
+  openNotifications,
+  anchorNotifications,
+  setAnchorNotifications,
+}) => {
+  const {
+    api,
+    production,
+    notificationsData,
+    setNotificationsData,
+  } = useHeaderProvider();
   const [anchorMenuEl, setAnchorMenuEl] = useState<null | HTMLElement>(null);
   const menuIsOpen = Boolean(anchorMenuEl);
+
+  // Configs to notifications filters
+  const [notificationFilters, setNotificationFilters] = useState({
+    type: notificationFilterType.ALL,
+    module_filter: '',
+  });
+
+  useEffect(() => {
+    // Load notifications when component mount
+    getNotifications(api, production, {}).then((response: any) => {
+      setNotificationsData(response.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (anchorNotifications) {
+      // Load notifications when notifications modal open
+      getNotifications(api, production, {}).then((response: any) => {
+        setNotificationsData(response.data);
+        checkAllViewed();
+      });
+    } else {
+      // Reset filters on modal close
+      setNotificationFilters({
+        type: notificationFilterType.ALL,
+        module_filter: '',
+      });
+
+      // Set notifications as readed
+      setNotificationsData((oldValue) => ({
+        ...oldValue,
+        data: oldValue.data.map((notification) => {
+          notification.saw = true;
+          return notification;
+        }),
+      }));
+    }
+  }, [anchorNotifications]);
+
+  const handleSetNotificationType = (value: string) => {
+    /**
+     * This function is used to set filter type on notifications
+     */
+    setNotificationFilters((oldState) => ({ ...oldState, type: value }));
+    getNotifications(api, production, {
+      params: {
+        module: notificationFilters.module_filter,
+        read: value === notificationFilterType.UNREADED ? value : null,
+      },
+    }).then((response: any) => setNotificationsData(response.data));
+  };
+
+  const handleSetNotificationsModuleFilter = (value: string) => {
+    /**
+     * This function is used to set module filter on notifications
+     */
+    setNotificationFilters((oldState) => ({
+      ...oldState,
+      module_filter: value,
+    }));
+    handleCloseModuleMenu();
+    getNotifications(api, production, {
+      params: {
+        read: notificationFilters.type,
+        module: value,
+      },
+    }).then((response: any) => setNotificationsData(response.data));
+  };
+
+  const handleCheckAllReaded = () => {
+    /**
+     * This function is used to check all notifications as readed
+     */
+    api.get(`${defineLinks(production).api.notifications}read`);
+    // Set notifications as viewed
+    setNotificationsData((oldValue) => ({
+      ...oldValue,
+      data: oldValue.data.map((notification) => {
+        notification.read = true;
+        return notification;
+      }),
+    }));
+  };
+
+  const checkAllViewed = () => {
+    /**
+     * When user opens the notifications modal, this function is called to check the most recents
+     * notifications as viewed.
+     */
+    api.get(`${defineLinks(production).api.notifications}saw`);
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorMenuEl(event.currentTarget);
@@ -26,7 +198,10 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
     setAnchorMenuEl(null);
   };
 
-  const [anchorModuleMenuEl, setAnchorModuleMenuEl] = useState<null | HTMLElement>(null);
+  const [
+    anchorModuleMenuEl,
+    setAnchorModuleMenuEl,
+  ] = useState<null | HTMLElement>(null);
   const moduleMenuIsOpen = Boolean(anchorModuleMenuEl);
 
   const handleClickModuleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -36,8 +211,9 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
     setAnchorModuleMenuEl(null);
   };
 
+  // @ts-ignore
   const getDataReadOrNot = (data: any, read: boolean) => {
-    return data.filter((item: any) => item.read === read);
+    return notificationsData.data.filter((item: any) => item.read === read);
   };
 
   return (
@@ -48,39 +224,44 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
       PaperProps={{
         elevation: 0,
         sx: {
-          overflow: "visible",
-          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+          overflow: 'visible',
+          filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
           width: 350,
           mt: 1.5,
-          "& .MuiAvatar-root": {
+          '& .MuiAvatar-root': {
             width: 40,
             height: 40,
             ml: -0.5,
             mr: 1,
           },
 
-          "&:before": {
+          '&:before': {
             content: '""',
-            display: "block",
-            position: "absolute",
+            display: 'block',
+            position: 'absolute',
             top: 0,
             right: 14,
             width: 10,
             height: 10,
-            bgcolor: "background.paper",
-            transform: "translateY(-50%) rotate(45deg)",
+            bgcolor: 'background.paper',
+            transform: 'translateY(-50%) rotate(45deg)',
             zIndex: 0,
           },
-          "& li, & a": {
+          '& li, & a': {
             fontFamily: '"Open Sans", sans-serif',
-            fontSize: "13px",
+            fontSize: '13px',
           },
         },
       }}
-      transformOrigin={{ horizontal: "right", vertical: "top" }}
-      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: "0 15px" }}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ padding: '0 15px' }}
+      >
         <Typography variant="h6">Notificações</Typography>
 
         <IconButton onClick={handleClick}>
@@ -94,19 +275,19 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
         onClose={handleClose}
         PaperProps={{
           elevation: 0,
-          sx: { boxShadow: "0 0px 8px 1px rgba(0, 0, 0, 0.1)" },
+          sx: { boxShadow: '0 0px 8px 1px rgba(0, 0, 0, 0.1)' },
         }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem sx={{ fontSize: "14px" }}>
+        <MenuItem sx={{ fontSize: '14px' }} onClick={handleCheckAllReaded}>
           <ListItemIcon>
             <DoneIcon fontSize="small" />
           </ListItemIcon>
           Marcar todas como lidas
         </MenuItem>
 
-        <MenuItem sx={{ fontSize: "14px" }}>
+        <MenuItem sx={{ fontSize: '14px' }}>
           <ListItemIcon>
             <ComputerIcon fontSize="small" />
           </ListItemIcon>
@@ -118,21 +299,51 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ padding: "0 15px", margin: "10px 0 20px" }}
+        sx={{ padding: '0 15px', margin: '10px 0 20px' }}
       >
         <Stack direction="row" spacing={1}>
-          <ButtonNotification active>Todas</ButtonNotification>
-          <ButtonNotification>Não Lidas</ButtonNotification>
+          <ButtonNotification
+            onClick={() =>
+              handleSetNotificationType(notificationFilterType.ALL)
+            }
+            active={notificationFilters.type === notificationFilterType.ALL}
+          >
+            Todas
+          </ButtonNotification>
+          <ButtonNotification
+            onClick={() =>
+              handleSetNotificationType(notificationFilterType.UNREADED)
+            }
+            active={
+              notificationFilters.type === notificationFilterType.UNREADED
+            }
+          >
+            Não Lidas
+          </ButtonNotification>
         </Stack>
 
         <ButtonNotification onClick={handleClickModuleMenu}>
-          Módulos
+          <label
+            style={{
+              whiteSpace: 'nowrap',
+              display: 'block',
+              maxWidth: 100,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {
+              incicleModules.find(
+                (module) => module.slug === notificationFilters.module_filter
+              )?.title
+            }
+          </label>
           <ArrowDropDownIcon
             fontSize="small"
             style={{
-              transition: "transform 500ms ease",
-              transform: moduleMenuIsOpen ? "rotate(180deg)" : "rotate(0)",
-              marginLeft: "5px",
+              transition: 'transform 500ms ease',
+              transform: moduleMenuIsOpen ? 'rotate(180deg)' : 'rotate(0)',
+              marginLeft: '5px',
             }}
           />
         </ButtonNotification>
@@ -144,91 +355,75 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
         onClose={handleCloseModuleMenu}
         PaperProps={{
           elevation: 0,
-          sx: { boxShadow: "0 0px 8px 1px rgba(0, 0, 0, 0.1)" },
+          sx: { boxShadow: '0 0px 8px 1px rgba(0, 0, 0, 0.1)' },
         }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem sx={{ fontSize: "14px" }}>
-          <ListItemIcon>
-            <img src="https://static-incicle.s3.amazonaws.com/agenda.svg" style={{ width: 24, height: 24 }} />
-          </ListItemIcon>
-          Agenda
-        </MenuItem>
-
-        <MenuItem sx={{ fontSize: "14px" }}>
-          <ListItemIcon>
-            <img
-              src="https://static-incicle.s3.amazonaws.com/avaliacao-por-competencia.svg"
-              style={{ width: 24, height: 24 }}
-            />
-          </ListItemIcon>
-          Avaliação por competência
-        </MenuItem>
-
-        <MenuItem sx={{ fontSize: "14px" }}>
-          <ListItemIcon>
-            <img
-              src="https://static-incicle.s3.amazonaws.com/departamento-pessoal.svg"
-              style={{ width: 24, height: 24 }}
-            />
-          </ListItemIcon>
-          Departamento pessoal
-        </MenuItem>
-
-        <MenuItem sx={{ fontSize: "14px" }}>
-          <ListItemIcon>
-            <img src="https://static-incicle.s3.amazonaws.com/endo-marketing.svg" style={{ width: 24, height: 24 }} />
-          </ListItemIcon>
-          Endo markenting
-        </MenuItem>
-
-        <MenuItem sx={{ fontSize: "14px" }}>
-          <ListItemIcon>
-            <img src="https://static-incicle.s3.amazonaws.com/feedback.svg" style={{ width: 24, height: 24 }} />
-          </ListItemIcon>
-          Feedback
-        </MenuItem>
-
-        <MenuItem sx={{ fontSize: "14px" }}>
-          <ListItemIcon>
-            <img
-              src="https://static-incicle.s3.amazonaws.com/pesquisa-de-clima.svg"
-              style={{ width: 24, height: 24 }}
-            />
-          </ListItemIcon>
-          Pesquisa de clima
-        </MenuItem>
-
-        <MenuItem sx={{ fontSize: "14px" }}>
-          <ListItemIcon>
-            <img src="https://static-incicle.s3.amazonaws.com/ouvidoria.svg" style={{ width: 24, height: 24 }} />
-          </ListItemIcon>
-          Ouvidoria
-        </MenuItem>
+        {incicleModules.map((module) => (
+          <MenuItem
+            key={module.slug}
+            onClick={() => handleSetNotificationsModuleFilter(module.slug)}
+            sx={{ fontSize: '14px' }}
+            value={module.slug}
+          >
+            <ListItemIcon>
+              <img src={module.icon} style={{ width: 24, height: 24 }} />
+            </ListItemIcon>
+            {module.title}
+          </MenuItem>
+        ))}
       </Menu>
 
-      {data.data && data.data.length ? (
+      <NotificationWrapper>
+        <Typography
+          variant="body2"
+          sx={{ padding: '0 15px', color: '#959595' }}
+        >
+          {notificationFilters.type === notificationFilterType.ALL
+            ? 'Todas'
+            : 'Não lidas'}
+        </Typography>
+        {notificationsData.data.length > 0 ? (
+          notificationsData.data.map((item) => (
+            <NotificationItem key={item._id} item={item} />
+          ))
+        ) : (
+          <Typography
+            style={{
+              width: '100%',
+              fontStyle: 'italic',
+              textAlign: 'center',
+              color: '#a8a8a8',
+            }}
+          >
+            Não há notificações no momento
+          </Typography>
+        )}
+      </NotificationWrapper>
+
+      {/* TO-DO -> FEATURE: USE THIS CODE TO DIVIDE ALL NOTIFCATION IN "RECENTS" AND "PREVIOUS" */}
+      {/* {notificationsData.data && notificationsData.data.length ? (
         <NotificationWrapper>
-          {!!getDataReadOrNot(data.data, false).length && (
+          {!!getDataReadOrNot(notificationsData.data, false).length && (
             <Box sx={{ marginBottom: "20px" }}>
               <Typography variant="body2" sx={{ padding: "0 15px", color: "#959595" }}>
-                Não lidas
+                {notificationFilters.type === notificationFilterType.ALL ? "Todas" : "Não lidas"}
               </Typography>
 
-              {getDataReadOrNot(data.data, false).map((item: any) => (
+              {getDataReadOrNot(notificationsData.data, false).map((item: any) => (
                 <NotificationItem key={item._id} item={item} />
               ))}
             </Box>
           )}
 
-          {!!getDataReadOrNot(data.data, true).length && (
+          {!!getDataReadOrNot(notificationsData.data, true).length && (
             <Box sx={{ background: "#f4f4f4", paddingTop: "10px", borderRadius: "5px 5px 0 0" }}>
               <Typography variant="body2" sx={{ padding: "0 15px", color: "#959595" }}>
                 Lidas
               </Typography>
 
-              {getDataReadOrNot(data.data, true).map((item: any) => (
+              {getDataReadOrNot(notificationsData.data, true).map((item: any) => (
                 <NotificationItem key={item._id} item={item} />
               ))}
             </Box>
@@ -238,7 +433,7 @@ const Notifications: React.FC<props> = ({ openNotifications, anchorNotifications
         <Typography style={{ width: "100%", fontStyle: "italic", textAlign: "center", color: "#a8a8a8" }}>
           Não há notificações no momento
         </Typography>
-      )}
+      )} */}
     </Menu>
   );
 };

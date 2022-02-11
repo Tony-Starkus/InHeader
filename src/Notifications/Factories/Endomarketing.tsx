@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { defineLinks } from "../../utils/functions";
 import { NotificationContainer, NotificationContentText } from "./NotificationAbstract";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
+import { NotificationProps } from "../../interfaces/Notification";
 
 interface IProps {
-  notificationItem: any;
+  notificationItem: NotificationProps;
 }
 
 const notificationType = {
@@ -28,10 +29,12 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
         return (
           <NotificationContainer
             url={`${links.web.social}publication/${notification.common.publication_id}`}
-            notification={notificationItem}>
+            notification={notificationItem}
+          >
             <NotificationContentText>
               <label>
-                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> adicionou um novo comunicado. Clique para ver.
+                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> adicionou um novo
+                comunicado. Clique para ver.
               </label>
             </NotificationContentText>
           </NotificationContainer>

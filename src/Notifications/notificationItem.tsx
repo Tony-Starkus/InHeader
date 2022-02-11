@@ -1,8 +1,9 @@
 import React from "react";
 import notificationFactory from "./Factories/notificationFactory";
+import { NotificationProps } from "../interfaces/Notification";
 
 interface props {
-  item: any;
+  item: NotificationProps;
 }
 
 const NotificationItem: React.FC<props> = ({ item }) => {
