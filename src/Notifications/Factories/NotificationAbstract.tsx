@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { MenuItem, Stack, Avatar, Typography } from "@mui/material";
+import { MenuItem, Stack, Avatar, Typography, Box } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { defineLinks } from "../../utils/functions";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 import { NotificationProps } from "../../interfaces/Notification";
+import incicleModules from "../../utils/incicleModules";
 
 interface IProps {
   notification: NotificationProps;
@@ -54,7 +55,29 @@ export const NotificationContainer: React.FC<IProps> = ({ notification, url, chi
       onClick={(e: any) => markAsReaded(e, notification, api, url, production)}
     >
       <Stack direction="row" style={{ width: "100%" }} alignItems="center">
-        <Avatar src={avatar} />
+        <Box sx={{ position: "relative" }}>
+          <Avatar src={avatar} />
+
+          {!!notification.module && (
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: "-4px",
+                left: "-4px",
+                width: "14px",
+                height: "14px",
+                border: "1px solid #00568b",
+                backgroundColor: "#fff",
+                borderRadius: "50%",
+              }}
+            >
+              <img
+                src={incicleModules.find(incicleModule => incicleModule.slug === notification.module)?.icon}
+                alt={notification.module}
+              />
+            </Box>
+          )}
+        </Box>
         <Stack direction="column" spacing={1} style={{ width: "100%", marginRight: "10px" }}>
           {children}
         </Stack>

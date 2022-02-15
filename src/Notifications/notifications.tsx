@@ -1,121 +1,58 @@
-import React, { useEffect, useState } from 'react';
-import {
-  IconButton,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Stack,
-  Typography,
-} from '@mui/material';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import NotificationItem from './notificationItem';
-import { ButtonNotification, NotificationWrapper } from './style';
-import DoneIcon from '@mui/icons-material/Done';
-import ComputerIcon from '@mui/icons-material/Computer';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { notificationFilterType } from '../utils/types';
-import { getNotifications } from '../utils/functions/notifications';
-import { useHeaderProvider } from '../hooks/useHeaderProvider';
-import { defineLinks } from '../utils/functions';
-
-import { moduleTypes } from '../interfaces/Notification';
+import React, { useEffect, useState } from "react";
+import { IconButton, ListItemIcon, Menu, MenuItem, Stack, Typography } from "@mui/material";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import NotificationItem from "./notificationItem";
+import { ButtonNotification, NotificationWrapper } from "./style";
+import DoneIcon from "@mui/icons-material/Done";
+import ComputerIcon from "@mui/icons-material/Computer";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { notificationFilterType } from "../utils/types";
+import { getNotifications, updateSawNotifications } from "../utils/functions/notifications";
+import { useHeaderProvider } from "../hooks/useHeaderProvider";
+import { defineLinks } from "../utils/functions";
+import incicleModules from "../utils/incicleModules";
 
 interface props {
   openNotifications: any;
   anchorNotifications: any;
   setAnchorNotifications: any;
+  setBadge: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-const incicleModules = [
-  {
-    title: 'Todos',
-    slug: moduleTypes.all,
-    icon: 'https://static-incicle.s3.amazonaws.com/all.svg',
-  },
-  {
-    title: 'Agenda',
-    slug: moduleTypes.schedule,
-    icon: 'https://static-incicle.s3.amazonaws.com/agenda.svg',
-  },
-  {
-    title: 'Avaliação por competência',
-    slug: moduleTypes.evaluation360,
-    icon:
-      'https://static-incicle.s3.amazonaws.com/avaliacao-por-competencia.svg',
-  },
-  {
-    title: 'Departamento pessoal',
-    slug: moduleTypes.personal_department,
-    icon: 'https://static-incicle.s3.amazonaws.com/departamento-pessoal.svg',
-  },
-  {
-    title: 'Endomarketing',
-    slug: moduleTypes.endomarketing,
-    icon: 'https://static-incicle.s3.amazonaws.com/endo-marketing.svg',
-  },
-  {
-    title: 'Feedback',
-    slug: moduleTypes.feedback,
-    icon: 'https://static-incicle.s3.amazonaws.com/feedback.svg',
-  },
-  {
-    title: 'Projetos',
-    slug: moduleTypes.project,
-    icon: 'https://static-incicle.s3.amazonaws.com/projetos.svg',
-  },
-  {
-    title: 'Rede Social',
-    slug: moduleTypes.social_network,
-    icon: 'https://static-incicle.s3.amazonaws.com/rede-social.svg',
-  },
-  {
-    title: 'Engenharia Organizacional',
-    slug: moduleTypes.organizational_engineering,
-    icon:
-      'https://static-incicle.s3.amazonaws.com/engenharia-organizacional.svg',
-  },
-  // {
-  //   title: "Pesquisa de clima",
-  //   slug: moduleTypes.climate_research,
-  //   icon: "https://static-incicle.s3.amazonaws.com/pesquisa-de-clima.svg",
-  // },
-  // {
-  //   title: "Ouvidoria",
-  //   slug: moduleTypes.ombudsman,
-  //   icon: "https://static-incicle.s3.amazonaws.com/ouvidoria.svg",
-  // },
-];
 
 const Notifications: React.FC<props> = ({
   openNotifications,
   anchorNotifications,
   setAnchorNotifications,
+  setBadge,
 }) => {
-  const {
-    api,
-    production,
-    notificationsData,
-    setNotificationsData,
-  } = useHeaderProvider();
+  const { api, production, notificationsData, setNotificationsData } = useHeaderProvider();
   const [anchorMenuEl, setAnchorMenuEl] = useState<null | HTMLElement>(null);
   const menuIsOpen = Boolean(anchorMenuEl);
 
   // Configs to notifications filters
   const [notificationFilters, setNotificationFilters] = useState({
     type: notificationFilterType.ALL,
-    module_filter: '',
+    module_filter: "",
   });
 
   useEffect(() => {
-    // Load notifications when component mount
+    // Load notifications when InHeader is mounted
     getNotifications(api, production, {}).then((response: any) => {
       setNotificationsData(response.data);
+      // Check if there is any notification that didnt see by user to show badge
+      let badgeValidator = response.data.data.some((item: any) => item.saw === false);
+      if (badgeValidator) {
+        setBadge(false);
+      }
     });
   }, []);
 
   useEffect(() => {
     if (anchorNotifications) {
       // Load notifications when notifications modal open
+      updateSawNotifications(api, production, {}).then(() => {
+        setBadge(true);
+      });
       getNotifications(api, production, {}).then((response: any) => {
         setNotificationsData(response.data);
         checkAllViewed();
@@ -124,13 +61,13 @@ const Notifications: React.FC<props> = ({
       // Reset filters on modal close
       setNotificationFilters({
         type: notificationFilterType.ALL,
-        module_filter: '',
+        module_filter: "",
       });
 
       // Set notifications as readed
-      setNotificationsData((oldValue) => ({
+      setNotificationsData(oldValue => ({
         ...oldValue,
-        data: oldValue.data.map((notification) => {
+        data: oldValue.data.map(notification => {
           notification.saw = true;
           return notification;
         }),
@@ -142,7 +79,7 @@ const Notifications: React.FC<props> = ({
     /**
      * This function is used to set filter type on notifications
      */
-    setNotificationFilters((oldState) => ({ ...oldState, type: value }));
+    setNotificationFilters(oldState => ({ ...oldState, type: value }));
     getNotifications(api, production, {
       params: {
         module: notificationFilters.module_filter,
@@ -155,10 +92,7 @@ const Notifications: React.FC<props> = ({
     /**
      * This function is used to set module filter on notifications
      */
-    setNotificationFilters((oldState) => ({
-      ...oldState,
-      module_filter: value,
-    }));
+    setNotificationFilters(oldState => ({ ...oldState, module_filter: value }));
     handleCloseModuleMenu();
     getNotifications(api, production, {
       params: {
@@ -174,9 +108,9 @@ const Notifications: React.FC<props> = ({
      */
     api.get(`${defineLinks(production).api.notifications}read`);
     // Set notifications as viewed
-    setNotificationsData((oldValue) => ({
+    setNotificationsData(oldValue => ({
       ...oldValue,
-      data: oldValue.data.map((notification) => {
+      data: oldValue.data.map(notification => {
         notification.read = true;
         return notification;
       }),
@@ -198,10 +132,7 @@ const Notifications: React.FC<props> = ({
     setAnchorMenuEl(null);
   };
 
-  const [
-    anchorModuleMenuEl,
-    setAnchorModuleMenuEl,
-  ] = useState<null | HTMLElement>(null);
+  const [anchorModuleMenuEl, setAnchorModuleMenuEl] = useState<null | HTMLElement>(null);
   const moduleMenuIsOpen = Boolean(anchorModuleMenuEl);
 
   const handleClickModuleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -224,44 +155,39 @@ const Notifications: React.FC<props> = ({
       PaperProps={{
         elevation: 0,
         sx: {
-          overflow: 'visible',
-          filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+          overflow: "visible",
+          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
           width: 350,
           mt: 1.5,
-          '& .MuiAvatar-root': {
+          "& .MuiAvatar-root": {
             width: 40,
             height: 40,
             ml: -0.5,
             mr: 1,
           },
 
-          '&:before': {
+          "&:before": {
             content: '""',
-            display: 'block',
-            position: 'absolute',
+            display: "block",
+            position: "absolute",
             top: 0,
             right: 14,
             width: 10,
             height: 10,
-            bgcolor: 'background.paper',
-            transform: 'translateY(-50%) rotate(45deg)',
+            bgcolor: "background.paper",
+            transform: "translateY(-50%) rotate(45deg)",
             zIndex: 0,
           },
-          '& li, & a': {
+          "& li, & a": {
             fontFamily: '"Open Sans", sans-serif',
-            fontSize: '13px',
+            fontSize: "13px",
           },
         },
       }}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      transformOrigin={{ horizontal: "right", vertical: "top" }}
+      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{ padding: '0 15px' }}
-      >
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ padding: "0 15px" }}>
         <Typography variant="h6">Notificações</Typography>
 
         <IconButton onClick={handleClick}>
@@ -275,19 +201,19 @@ const Notifications: React.FC<props> = ({
         onClose={handleClose}
         PaperProps={{
           elevation: 0,
-          sx: { boxShadow: '0 0px 8px 1px rgba(0, 0, 0, 0.1)' },
+          sx: { boxShadow: "0 0px 8px 1px rgba(0, 0, 0, 0.1)" },
         }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem sx={{ fontSize: '14px' }} onClick={handleCheckAllReaded}>
+        <MenuItem sx={{ fontSize: "14px" }} onClick={handleCheckAllReaded}>
           <ListItemIcon>
             <DoneIcon fontSize="small" />
           </ListItemIcon>
           Marcar todas como lidas
         </MenuItem>
 
-        <MenuItem sx={{ fontSize: '14px' }}>
+        <MenuItem sx={{ fontSize: "14px" }}>
           <ListItemIcon>
             <ComputerIcon fontSize="small" />
           </ListItemIcon>
@@ -299,24 +225,18 @@ const Notifications: React.FC<props> = ({
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ padding: '0 15px', margin: '10px 0 20px' }}
+        sx={{ padding: "0 15px", margin: "10px 0 20px" }}
       >
         <Stack direction="row" spacing={1}>
           <ButtonNotification
-            onClick={() =>
-              handleSetNotificationType(notificationFilterType.ALL)
-            }
+            onClick={() => handleSetNotificationType(notificationFilterType.ALL)}
             active={notificationFilters.type === notificationFilterType.ALL}
           >
             Todas
           </ButtonNotification>
           <ButtonNotification
-            onClick={() =>
-              handleSetNotificationType(notificationFilterType.UNREADED)
-            }
-            active={
-              notificationFilters.type === notificationFilterType.UNREADED
-            }
+            onClick={() => handleSetNotificationType(notificationFilterType.UNREADED)}
+            active={notificationFilters.type === notificationFilterType.UNREADED}
           >
             Não Lidas
           </ButtonNotification>
@@ -325,25 +245,21 @@ const Notifications: React.FC<props> = ({
         <ButtonNotification onClick={handleClickModuleMenu}>
           <label
             style={{
-              whiteSpace: 'nowrap',
-              display: 'block',
+              whiteSpace: "nowrap",
+              display: "block",
               maxWidth: 100,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
-            {
-              incicleModules.find(
-                (module) => module.slug === notificationFilters.module_filter
-              )?.title
-            }
+            {incicleModules.find(module => module.slug === notificationFilters.module_filter)?.title}
           </label>
           <ArrowDropDownIcon
             fontSize="small"
             style={{
-              transition: 'transform 500ms ease',
-              transform: moduleMenuIsOpen ? 'rotate(180deg)' : 'rotate(0)',
-              marginLeft: '5px',
+              transition: "transform 500ms ease",
+              transform: moduleMenuIsOpen ? "rotate(180deg)" : "rotate(0)",
+              marginLeft: "5px",
             }}
           />
         </ButtonNotification>
@@ -355,20 +271,20 @@ const Notifications: React.FC<props> = ({
         onClose={handleCloseModuleMenu}
         PaperProps={{
           elevation: 0,
-          sx: { boxShadow: '0 0px 8px 1px rgba(0, 0, 0, 0.1)' },
+          sx: { boxShadow: "0 0px 8px 1px rgba(0, 0, 0, 0.1)" },
         }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {incicleModules.map((module) => (
+        {incicleModules.map(module => (
           <MenuItem
             key={module.slug}
             onClick={() => handleSetNotificationsModuleFilter(module.slug)}
-            sx={{ fontSize: '14px' }}
+            sx={{ fontSize: "14px" }}
             value={module.slug}
           >
             <ListItemIcon>
-              <img src={module.icon} style={{ width: 24, height: 24 }} />
+              <img src={module.icon} style={{ width: 24, height: 24 }} alt={module.icon} />
             </ListItemIcon>
             {module.title}
           </MenuItem>
@@ -376,27 +292,13 @@ const Notifications: React.FC<props> = ({
       </Menu>
 
       <NotificationWrapper>
-        <Typography
-          variant="body2"
-          sx={{ padding: '0 15px', color: '#959595' }}
-        >
-          {notificationFilters.type === notificationFilterType.ALL
-            ? 'Todas'
-            : 'Não lidas'}
+        <Typography variant="body2" sx={{ padding: "0 15px", color: "#959595" }}>
+          {notificationFilters.type === notificationFilterType.ALL ? "Todas" : "Não lidas"}
         </Typography>
         {notificationsData.data.length > 0 ? (
-          notificationsData.data.map((item) => (
-            <NotificationItem key={item._id} item={item} />
-          ))
+          notificationsData.data.map(item => <NotificationItem key={item._id} item={item} />)
         ) : (
-          <Typography
-            style={{
-              width: '100%',
-              fontStyle: 'italic',
-              textAlign: 'center',
-              color: '#a8a8a8',
-            }}
-          >
+          <Typography style={{ width: "100%", fontStyle: "italic", textAlign: "center", color: "#a8a8a8" }}>
             Não há notificações no momento
           </Typography>
         )}

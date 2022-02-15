@@ -56,11 +56,12 @@ export const InHeader: React.FC<props> = ({
   noAvatar,
   signOut,
 }) => {
+  const [badge, setBadge] = useState(true);
+
   useEffect(() => {
     const contentSideBarElement = document.querySelector(
       '.contentSidebar > div'
     ) as any;
-
     const handleResize = () => {
       if (contentSideBarElement) {
         if (window.innerWidth < 800) {
@@ -98,8 +99,6 @@ export const InHeader: React.FC<props> = ({
   const [anchorNotifications, setAnchorNotifications] = useState(null);
   const openNotifications = Boolean(anchorNotifications);
 
-  // @ts-ignore
-  const [hasNewNotifications, setHasNewNotifications] = useState(false);
   const [inputBoxClassName, setInputBoxClassName] = useState('');
   const [showModules, setShowModules] = useState(false);
 
@@ -374,26 +373,22 @@ export const InHeader: React.FC<props> = ({
                           {
                             text: 'Feed',
                             link: links.web?.social,
-                            icon:
-                              'https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg',
+                            icon: 'https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg',
                           },
                           {
                             text: 'Agenda',
                             link: links.web?.schedule,
-                            icon:
-                              'https://social.incicle.com/static/media/IconSchedule.9195d460.svg',
+                            icon: 'https://social.incicle.com/static/media/IconSchedule.9195d460.svg',
                           },
                           {
                             text: 'Projetos',
                             link: links.web?.project,
-                            icon:
-                              'https://social.incicle.com/static/media/IconProjects.72b93d23.svg',
+                            icon: 'https://social.incicle.com/static/media/IconProjects.72b93d23.svg',
                           },
                           {
                             text: 'Feedbacks',
                             link: `${links.web?.social}feedback`,
-                            icon:
-                              'https://social.incicle.com/static/media/feedback-icon.5128afb5.svg',
+                            icon: 'https://social.incicle.com/static/media/feedback-icon.5128afb5.svg',
                           },
                           {
                             text: 'Gestão por competência',
@@ -401,8 +396,7 @@ export const InHeader: React.FC<props> = ({
                               user.type === 'PERSON'
                                 ? `${links.web.competency}/user_view`
                                 : links.web.competency,
-                            icon:
-                              'https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg',
+                            icon: 'https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg',
                           },
                         ].map((anchor) => {
                           if (anchor.text === 'Projetos') {
@@ -717,8 +711,10 @@ export const InHeader: React.FC<props> = ({
                     >
                       <Badge
                         color="primary"
-                        invisible={!hasNewNotifications}
                         variant="dot"
+                        invisible={badge}
+                        badgeContent=" "
+                        overlap="circular"
                       >
                         <NotificationsIcon sx={{ width: 25, height: 25 }} />
                       </Badge>
@@ -728,6 +724,7 @@ export const InHeader: React.FC<props> = ({
                     openNotifications={openNotifications}
                     anchorNotifications={anchorNotifications}
                     setAnchorNotifications={setAnchorNotifications}
+                    setBadge={setBadge}
                   />
 
                   {/* AVATAR PROFILE */}
@@ -934,26 +931,22 @@ export const InHeader: React.FC<props> = ({
                             {
                               text: 'Feed',
                               link: links.web?.social,
-                              icon:
-                                'https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg',
+                              icon: 'https://social.incicle.com/static/media/SocialNetwork.13674f9c.svg',
                             },
                             {
                               text: 'Agenda',
                               link: links.web?.schedule,
-                              icon:
-                                'https://social.incicle.com/static/media/IconSchedule.9195d460.svg',
+                              icon: 'https://social.incicle.com/static/media/IconSchedule.9195d460.svg',
                             },
                             {
                               text: 'Projetos',
                               link: links.web?.project,
-                              icon:
-                                'https://social.incicle.com/static/media/IconProjects.72b93d23.svg',
+                              icon: 'https://social.incicle.com/static/media/IconProjects.72b93d23.svg',
                             },
                             {
                               text: 'Feedbacks',
                               link: `${links.web?.social}feedback`,
-                              icon:
-                                'https://social.incicle.com/static/media/feedback-icon.5128afb5.svg',
+                              icon: 'https://social.incicle.com/static/media/feedback-icon.5128afb5.svg',
                             },
                             {
                               text: 'Gestão por competência',
@@ -961,8 +954,7 @@ export const InHeader: React.FC<props> = ({
                                 user.type === 'PERSON'
                                   ? `${links.web.competency}/user_view`
                                   : links.web.competency,
-                              icon:
-                                'https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg',
+                              icon: 'https://social.incicle.com/static/media/Avalia%C3%A7%C3%A3o_por_Competencia.cc36acdf.svg',
                             },
                           ].map((anchor) => {
                             if (anchor.text === 'Projetos') {
@@ -1215,8 +1207,10 @@ export const InHeader: React.FC<props> = ({
                     >
                       <Badge
                         color="primary"
-                        invisible={!hasNewNotifications}
                         variant="dot"
+                        invisible={badge}
+                        badgeContent=" "
+                        overlap="circular"
                       >
                         <NotificationsIcon sx={{ width: 25, height: 25 }} />
                       </Badge>
@@ -1226,6 +1220,7 @@ export const InHeader: React.FC<props> = ({
                     openNotifications={openNotifications}
                     anchorNotifications={anchorNotifications}
                     setAnchorNotifications={setAnchorNotifications}
+                    setBadge={setBadge}
                   />
 
                   {/* AVATAR PROFILE */}
