@@ -2,7 +2,7 @@ import React from "react";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 import { defineLinks } from "../../utils/functions";
 import { NotificationProps } from "../../interfaces/Notification";
-import { NotificationContainer, NotificationContentText } from "./NotificationAbstract";
+import { NotificationContainer, NotificationContentText, NotificationHighlight } from "./NotificationAbstract";
 
 interface Props {
   notificationItem: NotificationProps;
@@ -24,14 +24,13 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
       case notificaitonType.ADDED_IN_ACTIVITY:
         return (
           <NotificationContainer
-            url={`${links.web.project}kanban/${notificationItem.common.project_id}`}
+            url={`${links.web.project}kanban/${notificationItem.common.project_id}/task/${notificationItem.common.activity_id}`}
             notification={notificationItem}
           >
             <NotificationContentText>
-              <label>
-                {notificationItem.sender.name} incluiu você na atividade{" "}
-                <span style={{ fontWeight: 600 }}>{notificationItem.common.title_activity}</span>.
-              </label>
+              <NotificationHighlight>{notificationItem.sender.name}</NotificationHighlight> adicionou você na atividade{" "}
+              <NotificationHighlight>"{notificationItem.common.title_activity}"</NotificationHighlight> no projeto{" "}
+              <NotificationHighlight>"{notificationItem.common.title_project}"</NotificationHighlight>
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -44,8 +43,8 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
           >
             <NotificationContentText>
               <label>
-                {notificationItem.sender.name} adicionou você como membro do projeto{" "}
-                <span style={{ fontWeight: 600 }}>{notificationItem.common.title_project}</span>.
+                <NotificationHighlight>{notificationItem.sender.name}</NotificationHighlight> te adicionou no projeto{" "}
+                <NotificationHighlight>"{notificationItem.common.title_project}"</NotificationHighlight>.
               </label>
             </NotificationContentText>
           </NotificationContainer>
@@ -53,12 +52,14 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
 
       case notificaitonType.ACTIVITY_EXPIRATION:
         return (
-          <NotificationContainer url={`#`} notification={notificationItem}>
+          <NotificationContainer
+            url={`${links.web.project}kanban/${notificationItem.common.project_id}/task/${notificationItem.common.activity_id}`}
+            notification={notificationItem}
+          >
             <NotificationContentText>
-              <label>
-                O praso da atividade <span style={{ fontWeight: 600 }}>{notificationItem.common.title_activity}</span>{" "}
-                expirou.
-              </label>
+              Sua atividade <NotificationHighlight>"{notificationItem.common.title_activity}"</NotificationHighlight> no
+              projeto <NotificationHighlight>"{notificationItem.common.title_project}"</NotificationHighlight> vencerá
+              amanhã.
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -68,8 +69,8 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
           <NotificationContainer url={`#`} notification={notificationItem}>
             <NotificationContentText>
               <label>
-                {notificationItem.sender.name} removeu você do projeto{" "}
-                <span style={{ fontWeight: 600 }}>{notificationItem.common.title_project}</span>.
+                Você foi removido do projeto{" "}
+                <NotificationHighlight>{notificationItem.common.title_project}</NotificationHighlight>.
               </label>
             </NotificationContentText>
           </NotificationContainer>

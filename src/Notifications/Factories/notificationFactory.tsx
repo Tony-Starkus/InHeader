@@ -5,6 +5,9 @@ import ScheduleNotificationFactory from "./Schedule";
 import EndomarketingNotificationFactory from "./Endomarketing";
 import { ProjectsFactory } from "./Projects";
 import { NotificationProps, moduleTypes } from "../../interfaces/Notification";
+import EvaluationFactory from "./Evaluation";
+import OrganizationalEngineeringFactory from "./OrganizationalEngineering";
+import PersonalDepartmentFactory from "./PersonalDepartment";
 
 function createNotificationFactory(item: NotificationProps) {
   switch (item.module) {
@@ -22,6 +25,15 @@ function createNotificationFactory(item: NotificationProps) {
 
     case moduleTypes.endomarketing:
       return <EndomarketingNotificationFactory notificationItem={item} />;
+
+    case moduleTypes.evaluation360:
+      return <EvaluationFactory notificationItem={item} />;
+
+    case moduleTypes.organizational_engineering:
+      return <OrganizationalEngineeringFactory notificationItem={item} />;
+
+    case moduleTypes.personal_department:
+      return <PersonalDepartmentFactory notificationItem={item} />;
 
     default:
       break;

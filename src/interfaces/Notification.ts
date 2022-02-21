@@ -29,6 +29,7 @@ export interface NotificationProps {
   common: any;
   module: moduleTypes;
   read: boolean;
+  recipient_email?: string;
   recipient_id: string;
   saw: boolean;
   sender: NotificationSender;

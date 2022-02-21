@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { defineLinks } from "../../utils/functions";
-import { NotificationContainer, NotificationContentText } from "./NotificationAbstract";
+import {
+  NotificationContainer,
+  NotificationContentText,
+  NotificationHighlight,
+  reduceString,
+} from "./NotificationAbstract";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 import { NotificationProps } from "../../interfaces/Notification";
 
@@ -32,10 +37,8 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             notification={notificationItem}
           >
             <NotificationContentText>
-              <label>
-                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> adicionou um novo
-                comunicado. Clique para ver.
-              </label>
+              Comunicado:{" "}
+              <NotificationHighlight>"{reduceString(notification.common.content, 100)}"</NotificationHighlight>
             </NotificationContentText>
           </NotificationContainer>
         );

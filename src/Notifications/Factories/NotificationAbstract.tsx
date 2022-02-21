@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { MenuItem, Stack, Avatar, Typography, Box } from "@mui/material";
+import { MenuItem, Stack, Avatar, Typography, Box, Theme } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { defineLinks } from "../../utils/functions";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 import { NotificationProps } from "../../interfaces/Notification";
 import incicleModules from "../../utils/incicleModules";
+import { SxProps } from "@mui/system";
 
 interface IProps {
   notification: NotificationProps;
@@ -50,6 +51,11 @@ export const NotificationContainer: React.FC<IProps> = ({ notification, url, chi
         paddingBottom: "10px",
         backgroundColor: notification.saw ? "initial" : "#EEEEEE",
       }}
+      sx={{
+        "&:hover": {
+          backgroundColor: "#F2F3F4!important",
+        },
+      }}
       component="a"
       href={url}
       onClick={(e: any) => markAsReaded(e, notification, api, url, production)}
@@ -91,6 +97,7 @@ export const NotificationContentText: React.FC = ({ children }) => {
   return (
     <Typography
       sx={{
+        lineHeight: "15px",
         fontSize: "13px",
         width: "100%",
         overflowWrap: "anywhere",
@@ -102,4 +109,25 @@ export const NotificationContentText: React.FC = ({ children }) => {
       {children}
     </Typography>
   );
+};
+
+export const NotificationHighlight: React.FC<{ sx?: SxProps<Theme> }> = ({ sx, children }) => {
+  return (
+    <Typography
+      component="label"
+      sx={{
+        lineHeight: "15px",
+        color: "#00558E",
+        fontSize: "13px",
+        ...sx,
+      }}
+    >
+      {children}
+    </Typography>
+  );
+};
+
+export const reduceString = (value = "", length: number) => {
+  if (value?.length <= length) return value;
+  return `${value.slice(0, length - 3)}...`;
 };
