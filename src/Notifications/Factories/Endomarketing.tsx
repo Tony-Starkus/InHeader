@@ -36,7 +36,7 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             url={`${links.web.social}publication/${notification.common.publication_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Comunicado:{" "}
               <NotificationHighlight>"{reduceString(notification.common.content, 100)}"</NotificationHighlight>
             </NotificationContentText>

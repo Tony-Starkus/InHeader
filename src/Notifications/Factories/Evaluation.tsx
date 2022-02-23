@@ -47,7 +47,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
       case notificationType.LINK_TO_RESEARCH:
         return (
           <NotificationContainer url={links.web.evaluation} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Você foi convidado para a pesquisa{" "}
               <NotificationHighlight>{notification.common.name_research}</NotificationHighlight>, responda sua auto
               avaliação e gerencie seus avaliadores até{" "}
@@ -62,7 +62,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
             url={`${links.web.evaluation}questionary360/${notification.common.research_id}/${notification.common.company_id}/auto`}
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Você foi convidado para a pesquisa{" "}
               <NotificationHighlight>{notification.common.name_research}</NotificationHighlight>, responda sua auto
               avaliação até <NotificationHighlight>{notification.common.max_date}</NotificationHighlight>
@@ -78,7 +78,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
             url={`${links.web.evaluation}questionary360/${notification.common.research_id}/${notification.common.company_id}/auto`}
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               A empresa <NotificationHighlight>"{notification.sender.name}"</NotificationHighlight> aguarda sua
               auto-avaliação da pesquisa{" "}
               <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight> que vencerá em{" "}
@@ -90,7 +90,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
       case notificationType.SEARCH_EXPIRATION_OTHER_EVALUATION:
         return (
           <NotificationContainer url={`${links.web.evaluation}`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Você ainda não respondeu a pesquisa{" "}
               <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight> sobre{" "}
               <NotificationHighlight>"{notification.common.name_evaluated}"</NotificationHighlight> que vence amanhã.
@@ -101,7 +101,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
       case notificationType.PENDING_RESEARCH:
         return (
           <NotificationContainer url={`${links.web.evaluation}`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name.split(" ")[0]}: </NotificationHighlight>"
               {notification.common.content}"
             </NotificationContentText>
@@ -111,7 +111,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
       case notificationType.USER_PENDING_RESEARCH:
         return (
           <NotificationContainer url={`${links.web.evaluation}`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name.split(" ")[0]}: </NotificationHighlight>"
               {notification.common.content}"
             </NotificationContentText>
@@ -128,7 +128,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
             }
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name.split(" ")[0]}: </NotificationHighlight>"
               {notification.common.content}"
             </NotificationContentText>
@@ -141,7 +141,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
             url={`${links.web.evaluation}questionary360/${notification.common.research_id}/${notification.common.company_id}/${notification.common.evaluated_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Você foi adicionado como avaliador de{" "}
               <NotificationHighlight>"{notification.common.name_evaluated}"</NotificationHighlight> na pesquisa{" "}
               <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight>
@@ -152,7 +152,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
       case notificationType.EVALUATOR_OF_SURVEY_BY_COMPANY:
         return (
           <NotificationContainer url={`${links.web.evaluation}`} notification={notification}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Você foi adicionado como avaliador na pesquisa{" "}
               <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight>. Clique para
               responder
@@ -166,7 +166,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
             url={`${links.web.evaluation}/questionary360/${notification.common.research_id}/${notification.common.company_id}/${notification.common.evaluated_id}`}
             notification={notification}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name}</NotificationHighlight> adicionou você como avaliador na
               pesquisa <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight>.
             </NotificationContentText>
@@ -176,7 +176,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
       case notificationType.END_RESEARCH:
         return (
           <NotificationContainer url={links.web.evaluation} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Pesquisa <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight> concluída,
               entre e verifique seu resultado.
             </NotificationContentText>
@@ -186,7 +186,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
       case notificationType.RESEARCH_WITHOUT_MIN:
         return (
           <NotificationContainer url={links.web.evaluation} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Você ainda não alcançou o mínimo de avaliações na pesquisa{" "}
               <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight>
             </NotificationContentText>
@@ -199,7 +199,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
             url={`${links.web.evaluation}questionary360/${notification.common.research_id}/${notification.common.company_id}/auto`}
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name.split(" ")[0]}: </NotificationHighlight>"Responda sua
               autoavaliação. Esse exercício é essencial para seu crescimento."
             </NotificationContentText>

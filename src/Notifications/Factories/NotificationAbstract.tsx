@@ -7,6 +7,9 @@ import { NotificationProps } from "../../interfaces/Notification";
 import incicleModules from "../../utils/incicleModules";
 import { SxProps } from "@mui/system";
 
+// TimeAgo
+import ReactTimeAgo from "react-time-ago";
+
 interface IProps {
   notification: NotificationProps;
   url: string;
@@ -93,7 +96,7 @@ export const NotificationContainer: React.FC<IProps> = ({ notification, url, chi
   );
 };
 
-export const NotificationContentText: React.FC = ({ children }) => {
+export const NotificationContentText: React.FC<{ notification: NotificationProps }> = ({ notification, children }) => {
   return (
     <Typography
       sx={{
@@ -107,6 +110,9 @@ export const NotificationContentText: React.FC = ({ children }) => {
       }}
     >
       {children}
+      <small style={{ display: "block", fontSize: 9 }}>
+        <ReactTimeAgo date={new Date(notification.createdAt)} timeStyle="mini" />
+      </small>
     </Typography>
   );
 };

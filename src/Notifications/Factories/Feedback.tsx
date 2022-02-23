@@ -40,7 +40,7 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => 
       case notificationType.RECEIVED_FEEDBACK:
         return (
           <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name}</NotificationHighlight> enviou um feedback para você{" "}
               {notification.common.competence_name && (
                 <>
@@ -59,7 +59,7 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => 
       case notificationType.REQUEST_FEEDBACK:
         return (
           <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name}</NotificationHighlight> te solicitou um feedback
               {notification.common.competence_name && (
                 <>
@@ -75,7 +75,7 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => 
       case notificationType.FEEDBACK_EVENT_INVITATION:
         return (
           <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name}</NotificationHighlight> convidou você para o evento de
               feedback <NotificationHighlight>"{notification.common.event_name}"</NotificationHighlight>
             </NotificationContentText>
@@ -85,7 +85,7 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => 
       case notificationType.FEEDBACK_EVENT_WINNER:
         return (
           <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               Parabéns!, você venceu o evento{" "}
               <NotificationHighlight>"{notification.common.event_name}"</NotificationHighlight> da empresa{" "}
               <NotificationHighlight>"{notification.sender.name}"</NotificationHighlight>
@@ -96,7 +96,7 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => 
       case notificationType.CANCELED_FEEDBACK_EVENT:
         return (
           <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               O evento <NotificationHighlight>{notification.common.event_name}</NotificationHighlight> foi cancelado.
             </NotificationContentText>
           </NotificationContainer>
@@ -105,7 +105,7 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => 
       case notificationType.ANSWERED_REQUEST_FEEDBACK:
         return (
           <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               <NotificationHighlight>{notification.sender.name}</NotificationHighlight> respondeu sua solicitação de
               feedback.
             </NotificationContentText>
@@ -116,7 +116,7 @@ const FeedbackNotificationFactory: React.FC<IProps> = ({ notificationItem }) => 
         const dateNotificationMaxDate = moment(notification?.common?.max_date).diff(moment(), "day") + 1;
         return (
           <NotificationContainer url={`${links.web.social}feedback`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notification}>
               O evento de feedback <NotificationHighlight>"{notification.common.event_name}"</NotificationHighlight>{" "}
               vencerá {dateNotificationMaxDate > 1 ? `em ${dateNotificationMaxDate} dias` : "amanhã"}.
             </NotificationContentText>

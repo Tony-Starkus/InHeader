@@ -27,7 +27,7 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
             url={`${links.web.project}kanban/${notificationItem.common.project_id}/task/${notificationItem.common.activity_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notificationItem}>
               <NotificationHighlight>{notificationItem.sender.name}</NotificationHighlight> adicionou você na atividade{" "}
               <NotificationHighlight>"{notificationItem.common.title_activity}"</NotificationHighlight> no projeto{" "}
               <NotificationHighlight>"{notificationItem.common.title_project}"</NotificationHighlight>
@@ -41,7 +41,7 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
             url={`${links.web.project}kanban/${notificationItem.common.project_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notificationItem}>
               <label>
                 <NotificationHighlight>{notificationItem.sender.name}</NotificationHighlight> te adicionou no projeto{" "}
                 <NotificationHighlight>"{notificationItem.common.title_project}"</NotificationHighlight>.
@@ -56,7 +56,7 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
             url={`${links.web.project}kanban/${notificationItem.common.project_id}/task/${notificationItem.common.activity_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
+            <NotificationContentText notification={notificationItem}>
               Sua atividade <NotificationHighlight>"{notificationItem.common.title_activity}"</NotificationHighlight> no
               projeto <NotificationHighlight>"{notificationItem.common.title_project}"</NotificationHighlight> vencerá
               amanhã.
@@ -67,7 +67,7 @@ export const ProjectsFactory: React.FC<Props> = ({ notificationItem }) => {
       case notificaitonType.REMOVED_FROM_PROJECT:
         return (
           <NotificationContainer url={`#`} notification={notificationItem}>
-            <NotificationContentText>
+            <NotificationContentText notification={notificationItem}>
               <label>
                 Você foi removido do projeto{" "}
                 <NotificationHighlight>{notificationItem.common.title_project}</NotificationHighlight>.

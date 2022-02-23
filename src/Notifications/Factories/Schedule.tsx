@@ -1,34 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { defineLinks } from '../../utils/functions';
-import {
-  NotificationContainer,
-  NotificationContentText,
-  NotificationHighlight,
-} from './NotificationAbstract';
-import { useHeaderProvider } from '../../hooks/useHeaderProvider';
-import { NotificationProps } from '../../interfaces/Notification';
-import moment from 'moment';
+import React, { useEffect, useState } from "react";
+import { defineLinks } from "../../utils/functions";
+import { NotificationContainer, NotificationContentText, NotificationHighlight } from "./NotificationAbstract";
+import { useHeaderProvider } from "../../hooks/useHeaderProvider";
+import { NotificationProps } from "../../interfaces/Notification";
+import moment from "moment";
 
 interface IProps {
   notificationItem: NotificationProps;
 }
 
 const notificationType = {
-  NEW_EVENT_SCHEDULE_INVITATION: 'NEW_EVENT_SCHEDULE_INVITATION',
-  NEW_TASK_INVITATION: 'NEW_TASK_INVITATION',
-  EVENT_INVITATION_ANSWER: 'EVENT_INVITATION_ANSWER',
-  EVENT_QUIT: 'EVENT_QUIT',
-  EVENT_CANCELLED: 'EVENT_CANCELLED',
-  EVENT_UPDATE: 'EVENT_UPDATE',
-  TASK_STATUS_UPDATE: 'TASK_STATUS_UPDATE',
-  UPCOMING_EVENT: 'UPCOMING_EVENT',
-  ADDED_SCHEDULE: 'ADDED_SCHEDULE',
+  NEW_EVENT_SCHEDULE_INVITATION: "NEW_EVENT_SCHEDULE_INVITATION",
+  NEW_TASK_INVITATION: "NEW_TASK_INVITATION",
+  EVENT_INVITATION_ANSWER: "EVENT_INVITATION_ANSWER",
+  EVENT_QUIT: "EVENT_QUIT",
+  EVENT_CANCELLED: "EVENT_CANCELLED",
+  EVENT_UPDATE: "EVENT_UPDATE",
+  TASK_STATUS_UPDATE: "TASK_STATUS_UPDATE",
+  UPCOMING_EVENT: "UPCOMING_EVENT",
+  ADDED_SCHEDULE: "ADDED_SCHEDULE",
 };
 
 // @ts-ignore
-const ScheduleNotificationFactory: React.FC<IProps> = ({
-  notificationItem,
-}) => {
+const ScheduleNotificationFactory: React.FC<IProps> = ({ notificationItem }) => {
   const { production } = useHeaderProvider();
   const links = defineLinks(production);
   // @ts-ignore
@@ -40,72 +34,36 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
 
   const renderActions = () => {
     // Used on type: EVENT_UPDATE
-    function returnEventUpdate(type: 'date' | 'local' | 'hour' | 'other') {
-      if (type === 'date') {
+    function returnEventUpdate(type: "date" | "local" | "hour" | "other") {
+      if (type === "date") {
         return (
           <>
-            a data do evento{' '}
-            <NotificationHighlight>
-              "{notification.common.event_name}"
-            </NotificationHighlight>{' '}
-            de{' '}
-            <NotificationHighlight>
-              {moment(notification.common.from).format('DD/MM/YYYY')}
-            </NotificationHighlight>{' '}
-            para{' '}
-            <NotificationHighlight>
-              {moment(notification.common.to).format('DD/MM/YYYY')}
-            </NotificationHighlight>
-            .
+            a data do evento <NotificationHighlight>"{notification.common.event_name}"</NotificationHighlight> de{" "}
+            <NotificationHighlight>{moment(notification.common.from).format("DD/MM/YYYY")}</NotificationHighlight> para{" "}
+            <NotificationHighlight>{moment(notification.common.to).format("DD/MM/YYYY")}</NotificationHighlight>.
           </>
         );
-      } else if (type === 'local') {
+      } else if (type === "local") {
         return (
           <>
-            o local do evento{' '}
-            <NotificationHighlight>
-              "{notification.common.event_name}"
-            </NotificationHighlight>{' '}
-            de{' '}
-            <NotificationHighlight>
-              {notification.common.from}
-            </NotificationHighlight>{' '}
-            para{' '}
-            <NotificationHighlight>
-              {notification.common.to}
-            </NotificationHighlight>
-            .
+            o local do evento <NotificationHighlight>"{notification.common.event_name}"</NotificationHighlight> de{" "}
+            <NotificationHighlight>{notification.common.from}</NotificationHighlight> para{" "}
+            <NotificationHighlight>{notification.common.to}</NotificationHighlight>.
           </>
         );
-      } else if (type === 'hour') {
+      } else if (type === "hour") {
         return (
           <>
-            o horário do evento{' '}
-            <NotificationHighlight>
-              "{notification.common.event_name}"
-            </NotificationHighlight>{' '}
-            de{' '}
-            <NotificationHighlight>
-              {moment(notification.common.from).format('DD/MM/YYYY')}
-            </NotificationHighlight>{' '}
-            às{' '}
-            <NotificationHighlight>
-              {moment(notification.common.from).format('HH:mm')}
-            </NotificationHighlight>{' '}
-            para as{' '}
-            <NotificationHighlight>
-              {moment(notification.common.to).format('HH:mm')}
-            </NotificationHighlight>
-            .
+            o horário do evento <NotificationHighlight>"{notification.common.event_name}"</NotificationHighlight> de{" "}
+            <NotificationHighlight>{moment(notification.common.from).format("DD/MM/YYYY")}</NotificationHighlight> às{" "}
+            <NotificationHighlight>{moment(notification.common.from).format("HH:mm")}</NotificationHighlight> para as{" "}
+            <NotificationHighlight>{moment(notification.common.to).format("HH:mm")}</NotificationHighlight>.
           </>
         );
-      } else if (type === 'other') {
+      } else if (type === "other") {
         return (
           <>
-            o evento{' '}
-            <NotificationHighlight>
-              "{notification.common.event_name}"
-            </NotificationHighlight>
+            o evento <NotificationHighlight>"{notification.common.event_name}"</NotificationHighlight>
           </>
         );
       } else {
@@ -115,20 +73,16 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
 
     function returnTaskUpdate(status: string) {
       // Used on type: TASK_STATUS_UPDATE
-      if (status === 'em andamento') {
+      if (status === "em andamento") {
         return (
           <>
-            <NotificationHighlight sx={{ color: '#00A424' }}>
-              {status}
-            </NotificationHighlight>
+            <NotificationHighlight sx={{ color: "#00A424" }}>{status}</NotificationHighlight>
           </>
         );
-      } else if (status === 'feito') {
+      } else if (status === "feito") {
         return (
           <>
-            <NotificationHighlight sx={{ color: '#F3B516' }}>
-              {status}
-            </NotificationHighlight>
+            <NotificationHighlight sx={{ color: "#F3B516" }}>{status}</NotificationHighlight>
           </>
         );
       } else {
@@ -143,24 +97,13 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
             url={`${links.web.schedule}event/${notificationItem.common.event_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
-              <NotificationHighlight>
-                {notification.sender.name}
-              </NotificationHighlight>{' '}
-              convidou você para{' '}
-              <NotificationHighlight>
-                {notification.common.event_name}
-              </NotificationHighlight>{' '}
-              que acontecerá no dia{' '}
-              <NotificationHighlight>
-                {moment(notification.common.date).format('DD/MM/YYYY')}
-              </NotificationHighlight>
+            <NotificationContentText notification={notification}>
+              <NotificationHighlight>{notification.sender.name}</NotificationHighlight> convidou você para{" "}
+              <NotificationHighlight>{notification.common.event_name}</NotificationHighlight> que acontecerá no dia{" "}
+              <NotificationHighlight>{moment(notification.common.date).format("DD/MM/YYYY")}</NotificationHighlight>
               {!notification.common.whole_day && (
                 <>
-                  , às{' '}
-                  <NotificationHighlight>
-                    {moment(notification.common.date).format('HH:mm')}
-                  </NotificationHighlight>
+                  , às <NotificationHighlight>{moment(notification.common.date).format("HH:mm")}</NotificationHighlight>
                 </>
               )}
             </NotificationContentText>
@@ -173,15 +116,12 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
             url={`${links.web.schedule}task/${notificationItem.common.task_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
-              <NotificationHighlight sx={{ textTransform: 'capitalize' }}>
+            <NotificationContentText notification={notification}>
+              <NotificationHighlight sx={{ textTransform: "capitalize" }}>
                 {notification.sender.name}
-              </NotificationHighlight>{' '}
-              delegou a task{' '}
-              <NotificationHighlight>
-                "{notification.common.task_title}"
-              </NotificationHighlight>{' '}
-              para você.
+              </NotificationHighlight>{" "}
+              delegou a task <NotificationHighlight>"{notification.common.task_title}"</NotificationHighlight> para
+              você.
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -192,24 +132,12 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
             url={`${links.web.schedule}event/${notification.common.event_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
-              <NotificationHighlight>
-                {notification.sender.name}
-              </NotificationHighlight>{' '}
-              <NotificationHighlight
-                sx={{
-                  color:
-                    notification.common.accepted === true
-                      ? '#00A424'
-                      : '#F61313',
-                }}
-              >
-                {notification.common.accepted === true ? 'aceitou' : 'recusou'}
-              </NotificationHighlight>{' '}
-              seu convite para o evento{' '}
-              <NotificationHighlight>
-                {notification.common.event_name}
-              </NotificationHighlight>
+            <NotificationContentText notification={notification}>
+              <NotificationHighlight>{notification.sender.name}</NotificationHighlight>{" "}
+              <NotificationHighlight sx={{ color: notification.common.accepted === true ? "#00A424" : "#F61313" }}>
+                {notification.common.accepted === true ? "aceitou" : "recusou"}
+              </NotificationHighlight>{" "}
+              seu convite para o evento <NotificationHighlight>{notification.common.event_name}</NotificationHighlight>
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -220,33 +148,19 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
             url={`${links.web.schedule}event/${notification.common.event_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText>
-              <NotificationHighlight>
-                {notification.sender.name}
-              </NotificationHighlight>{' '}
-              saiu do evento{' '}
-              <NotificationHighlight>
-                {notification.common.event_name}
-              </NotificationHighlight>
+            <NotificationContentText notification={notification}>
+              <NotificationHighlight>{notification.sender.name}</NotificationHighlight> saiu do evento{" "}
+              <NotificationHighlight>{notification.common.event_name}</NotificationHighlight>
             </NotificationContentText>
           </NotificationContainer>
         );
 
       case notificationType.EVENT_CANCELLED:
         return (
-          <NotificationContainer
-            url={`${links.web.schedule}`}
-            notification={notificationItem}
-          >
-            <NotificationContentText>
-              <NotificationHighlight>
-                {notification.sender.name}
-              </NotificationHighlight>{' '}
-              cancelou o evento{' '}
-              <NotificationHighlight>
-                {notification.common.event_name}
-              </NotificationHighlight>
-              .
+          <NotificationContainer url={`${links.web.schedule}`} notification={notificationItem}>
+            <NotificationContentText notification={notification}>
+              <NotificationHighlight>{notification.sender.name}</NotificationHighlight> cancelou o evento{" "}
+              <NotificationHighlight>{notification.common.event_name}</NotificationHighlight>.
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -257,11 +171,9 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
             url={`${links.web.schedule}event/${notification.common.event_id}`}
             notification={notification}
           >
-            <NotificationContentText>
-              <NotificationHighlight>
-                {notification.sender.name}
-              </NotificationHighlight>{' '}
-              alterou {returnEventUpdate(notification.common.data_updated)}
+            <NotificationContentText notification={notification}>
+              <NotificationHighlight>{notification.sender.name}</NotificationHighlight> alterou{" "}
+              {returnEventUpdate(notification.common.data_updated)}
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -272,16 +184,10 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
             url={`${links.web.schedule}event/${notification.common.event_id}`}
             notification={notification}
           >
-            <NotificationContentText>
-              O evento{' '}
-              <NotificationHighlight>
-                "{notification.common.event_name}"
-              </NotificationHighlight>{' '}
-              está próximo de acontecer, fique atento a data{' '}
-              <NotificationHighlight>
-                {moment(notification.common.date).format('DD/MM/YYYY')}
-              </NotificationHighlight>
-              .
+            <NotificationContentText notification={notification}>
+              O evento <NotificationHighlight>"{notification.common.event_name}"</NotificationHighlight> está próximo de
+              acontecer, fique atento a data{" "}
+              <NotificationHighlight>{moment(notification.common.date).format("DD/MM/YYYY")}</NotificationHighlight>.
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -292,14 +198,9 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
             url={`${links.web.schedule}task/${notification.common.task_id}`}
             notification={notification}
           >
-            <NotificationContentText>
-              <NotificationHighlight>
-                {notification.sender.name}
-              </NotificationHighlight>{' '}
-              alterou o status da Task para{' '}
-              <NotificationHighlight>
-                {returnTaskUpdate(notification.common.task_status)}
-              </NotificationHighlight>
+            <NotificationContentText notification={notification}>
+              <NotificationHighlight>{notification.sender.name}</NotificationHighlight> alterou o status da Task para{" "}
+              <NotificationHighlight>{returnTaskUpdate(notification.common.task_status)}</NotificationHighlight>
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -310,14 +211,9 @@ const ScheduleNotificationFactory: React.FC<IProps> = ({
             url={`${links.web.schedule}task/${notification.common.task_id}`}
             notification={notification}
           >
-            <NotificationContentText>
-              <NotificationHighlight>
-                {notification.sender.name}
-              </NotificationHighlight>{' '}
-              te adicionou na agenda{' '}
-              <NotificationHighlight>
-                "{notification.common.schedule_name}"
-              </NotificationHighlight>
+            <NotificationContentText notification={notification}>
+              <NotificationHighlight>{notification.sender.name}</NotificationHighlight> te adicionou na agenda{" "}
+              <NotificationHighlight>"{notification.common.schedule_name}"</NotificationHighlight>
             </NotificationContentText>
           </NotificationContainer>
         );
