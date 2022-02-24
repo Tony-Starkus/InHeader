@@ -152,7 +152,7 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
               notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED
                 ? profile?.username
                 : notificationItem.sender.username
-            }`}
+            }?request_id=${notificationItem.common.request_recommendation_id}&action=open_recommendation_modal`}
             notification={notificationItem}
           >
             <NotificationContentText notification={notificationItem}>

@@ -41,9 +41,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
   }, [notification]);
 
   function formatDateNotification(date: string) {
-    const data = date?.split("/");
-
-    return `${data[2]}-${data[1]}-${data[0]}`;
+    return moment(date).format("yyyy-MM-DD");
   }
 
   const renderActions = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { IconButton, ListItemIcon, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import NotificationItem from "./notificationItem";
@@ -6,6 +6,9 @@ import { ButtonNotification, NotificationWrapper } from "./style";
 import DoneIcon from "@mui/icons-material/Done";
 import ComputerIcon from "@mui/icons-material/Computer";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Cookies from "js-cookie";
+import socketIOClient from "socket.io-client";
+import { decode } from "../utils/crypto";
 import { notificationFilterType } from "../utils/types";
 import { getNotifications, updateSawNotifications } from "../utils/functions/notifications";
 import { useHeaderProvider } from "../hooks/useHeaderProvider";
@@ -28,12 +31,32 @@ const Notifications: React.FC<props> = ({
   const { api, production, notificationsData, setNotificationsData } = useHeaderProvider();
   const [anchorMenuEl, setAnchorMenuEl] = useState<null | HTMLElement>(null);
   const menuIsOpen = Boolean(anchorMenuEl);
+  const socketRef = useRef(
+    socketIOClient(production ? "https://notifications.incicle.com" : "https://notifications-stage.incicle.com/"),
+  );
+  const socket = socketRef.current;
 
   // Configs to notifications filters
   const [notificationFilters, setNotificationFilters] = useState({
     type: notificationFilterType.ALL,
     module_filter: "",
   });
+
+  useEffect(() => {
+    // Load websocket
+    const decodedToken = decode(Cookies.get("authToken") || "");
+    const user = JSON.parse(decode(Cookies.get("user") || ""));
+    socket.emit("join room", user.id, decodedToken);
+    socket.on(user.id, (data: any) => {
+      if (data !== "Connected") {
+        setBadge(false);
+        setNotificationsData(oldState => ({
+          ...oldState,
+          data: [data, ...oldState.data],
+        }));
+      }
+    });
+  }, []);
 
   useEffect(() => {
     // Load notifications when InHeader is mounted
@@ -53,10 +76,7 @@ const Notifications: React.FC<props> = ({
       updateSawNotifications(api, production, {}).then(() => {
         setBadge(true);
       });
-      getNotifications(api, production, {}).then((response: any) => {
-        setNotificationsData(response.data);
-        checkAllViewed();
-      });
+      checkAllViewed();
     } else {
       // Reset filters on modal close
       setNotificationFilters({
