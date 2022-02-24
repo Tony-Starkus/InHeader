@@ -4,6 +4,8 @@ import AWS from "aws-sdk";
 import { User } from "../interfaces/User";
 import { MeProps } from "../interfaces/Me";
 import { NotificationProps } from "../interfaces/Notification";
+import { defineLinks } from "../utils/functions";
+import { AxiosInstance } from "axios";
 
 export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 export type GetS3Object = (path: string) => Promise<string>;
@@ -13,7 +15,7 @@ export interface HeaderProviderProps {
   profiles?: MeProps;
   companySelected?: string;
   production: boolean;
-  api: any;
+  api: AxiosInstance;
   getS3Object: GetS3Object;
 }
 
@@ -32,6 +34,7 @@ export interface HeaderContextProps extends HeaderProviderProps {
   setProduction: SetState<boolean>;
   notificationsData: NotificationsDataProps;
   setNotificationsData: SetState<NotificationsDataProps>;
+  updateNotificationItem: (data: NotificationProps) => void;
 }
 
 export interface Props {
@@ -41,6 +44,7 @@ export interface Props {
 export const HeaderContext = createContext<HeaderContextProps>({} as HeaderContextProps);
 
 const HeaderProvider: React.FC<Props> = ({ children, value }) => {
+  const { api } = value;
   const [user, setUser] = useState(value.user);
   const [profiles, setProfiles] = useState(value.profiles);
   const [companySelected, setCompanySelected] = useState(value.companySelected);
@@ -101,6 +105,33 @@ const HeaderProvider: React.FC<Props> = ({ children, value }) => {
     });
   };
 
+  const updateNotificationItem = (data: NotificationProps) => {
+    /**
+     * This function updates a notification item in the notificationsData data array.
+     * Then it marks the notification provided on params as readed.
+     *
+     * params:
+     *  data: notification object with new values
+     *
+     * return: void
+     */
+    const notificationIndex = notificationsData.data.findIndex(item => {
+      return item._id === data._id;
+    });
+    if (notificationIndex !== -1) {
+      // Notification found
+      const newArray = [...notificationsData.data];
+      newArray[notificationIndex] = data;
+      setNotificationsData(oldState => ({
+        ...oldState,
+        data: newArray,
+      }));
+
+      // Mark notification as readed
+      api.patch(`${defineLinks(production).api.notifications}${data._id}`);
+    }
+  };
+
   useEffect(() => {
     if (value.user) setUser(value.user);
     if (value.profiles) setProfiles(value.profiles);
@@ -121,6 +152,7 @@ const HeaderProvider: React.FC<Props> = ({ children, value }) => {
     setNotificationsData,
     api: value.api,
     getS3Object: getS3Object,
+    updateNotificationItem,
   } as HeaderContextProps;
 
   return <HeaderContext.Provider value={context}>{children}</HeaderContext.Provider>;

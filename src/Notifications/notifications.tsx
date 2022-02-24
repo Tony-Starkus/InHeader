@@ -213,7 +213,7 @@ const Notifications: React.FC<props> = ({
           Marcar todas como lidas
         </MenuItem>
 
-        <MenuItem sx={{ fontSize: "14px" }}>
+        <MenuItem component="a" href={`${defineLinks(production).web.social}notifications`} sx={{ fontSize: "14px" }}>
           <ListItemIcon>
             <ComputerIcon fontSize="small" />
           </ListItemIcon>

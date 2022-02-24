@@ -19,7 +19,7 @@ export const preventRedirect = (e: any) => {
   e.preventDefault();
 };
 
-const markAsReaded = (e: any, notification: any, api: any, url: string, production: boolean) => {
+const markAsReaded = (e: any, notification: NotificationProps, api: any, url: string, production: boolean) => {
   e.preventDefault();
   const link = defineLinks(production);
   api

@@ -14,6 +14,10 @@ export const getNotifications = (
 };
 
 export const updateSawNotifications = (api: AxiosInstance, production: boolean, { params = {} }: any) => {
+  /**
+   * When user opens the notifications modal, this function is called to check the most recents
+   * notifications as viewed.
+   */
   const response = api.get(`${defineLinks(production).api.notifications}saw`, {
     params: params,
   });

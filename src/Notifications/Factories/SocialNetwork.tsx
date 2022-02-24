@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { defineLinks } from "../../utils/functions";
 import {
   NotificationContainer,
@@ -30,52 +30,39 @@ const notificationType = {
 
 // @ts-ignore
 const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }) => {
-  const { production, profiles: profile, api } = useHeaderProvider();
+  const { production, profiles: profile, api, updateNotificationItem } = useHeaderProvider();
   const links = defineLinks(production);
-  // @ts-ignore
-  const [notification, setNotification] = useState(notificationItem);
 
   const acceptRequestFriend = (e: any) => {
     e.stopPropagation(); // Prevent call parent onClick event.
     preventRedirect(e);
-    api.put(`${links.api.social}friends/${notificationItem.common.connection_id}`).then((response: any) => {
-      if (response.status === 204) {
-        api.put(`${links.api.notifications}${notificationItem._id}/accept`, { accept: true }).then((response: any) => {
-          if (response.status === 200) {
-            setNotification({
-              ...notification,
-              common: {
-                accept: true,
-              },
-            });
-          }
-        });
-      }
+    updateNotificationItem({
+      ...notificationItem,
+      read: true,
+      common: {
+        status: "accepted",
+      },
     });
+
+    api.put(`${links.api.social}friends/${notificationItem.common.connection_id}`);
   };
 
   const excludeRequestFriend = (e: any) => {
     e.stopPropagation(); // Prevent call parent onClick event.
     preventRedirect(e);
-    api.delete(`${links.api.social}connections/${notificationItem.common.connection_id}`).then((response: any) => {
-      if (response.status === 204) {
-        api.put(`${links.api.notifications}${notificationItem._id}/accept`, { accept: false }).then((response: any) => {
-          if (response.status === 200) {
-            setNotification({
-              ...notification,
-              common: {
-                accept: false,
-              },
-            });
-          }
-        });
-      }
+    updateNotificationItem({
+      ...notificationItem,
+      read: true,
+      common: {
+        status: "refused",
+      },
     });
+    api.delete(`${links.api.social}friends/${notificationItem.common.connection_id}`);
   };
 
   useEffect(() => {
     renderActions();
-  }, [notification]);
+  }, [notificationItem]);
 
   const renderActions = () => {
     switch (notificationItem.type) {
@@ -85,44 +72,49 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             url={`${links.web.social}p/${notificationItem.sender.username}`}
             notification={notificationItem}
           >
-            <NotificationContentText notification={notification}>
+            <NotificationContentText notification={notificationItem}>
               <label>
-                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label> te enviou uma
+                <label style={{ textTransform: "capitalize" }}>{notificationItem.sender.name}</label> te enviou uma
                 solicitação de amizade.
               </label>
+              <Stack component="label" direction="row" spacing={1} style={{ marginTop: 1 }}>
+                {notificationItem.common.status === "pending" && (
+                  <Stack component="label" direction="row" spacing={1} style={{ marginTop: 2, marginBottom: 4 }}>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor: "rgb(0, 133, 176)",
+                        color: "#fff",
+                        fontSize: "0.7125rem",
+                        "&:hover": {
+                          backgroundColor: "#0177ac",
+                          color: "#FFF",
+                          filter: "brightness(0.85)",
+                        },
+                      }}
+                      size="small"
+                      onClick={e => acceptRequestFriend(e)}
+                    >
+                      Aceitar
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      sx={{
+                        fontSize: "0.7125rem",
+                        color: "rgb(0, 133, 176)",
+                        borderColor: "1px solid rgb(0, 133, 176)",
+                      }}
+                      onClick={e => excludeRequestFriend(e)}
+                    >
+                      Recusar
+                    </Button>
+                  </Stack>
+                )}
+                {notificationItem.common.status === "accepted" && <small>Pedido aceito</small>}
+                {notificationItem.common.status === "refused" && <small>Pedido recusado</small>}
+              </Stack>
             </NotificationContentText>
-            <Stack direction="row" spacing={1} style={{ marginTop: 0 }}>
-              {notification.common.status === "pending" && (
-                <>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      backgroundColor: "rgb(0, 133, 176)",
-                      color: "#fff",
-                      "&:hover": {
-                        backgroundColor: "#0177ac",
-                        color: "#FFF",
-                        filter: "brightness(0.85)",
-                      },
-                    }}
-                    size="small"
-                    onClick={e => acceptRequestFriend(e)}
-                  >
-                    Aceitar
-                  </Button>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    sx={{ color: "rgb(0, 133, 176)", borderColor: "1px solid rgb(0, 133, 176)" }}
-                    onClick={e => excludeRequestFriend(e)}
-                  >
-                    Recusar
-                  </Button>
-                </>
-              )}
-              {notification.common.status === "accepted" && <small>Pedido aceito</small>}
-              {notification.common.status === "refused" && <small>Pedido recusado</small>}
-            </Stack>
           </NotificationContainer>
         );
 
@@ -134,9 +126,9 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText notification={notification}>
+            <NotificationContentText notification={notificationItem}>
               <label>
-                <NotificationHighlight>{notification.sender.name}</NotificationHighlight>
+                <NotificationHighlight>{notificationItem.sender.name}</NotificationHighlight>
                 {notificationItem.type === notificationType.PUBLICATION_TYPE_LIKE && " gostou da "}
                 {notificationItem.type === notificationType.PUBLICATION_TYPE_COMMENT && " comentou na "}
                 {notificationItem.type === notificationType.PUBLICATION_TYPE_SHARE && " compartilhou "}
@@ -159,20 +151,20 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             url={`${links.web.social}p/${
               notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED
                 ? profile?.username
-                : notification.sender.username
+                : notificationItem.sender.username
             }`}
             notification={notificationItem}
           >
-            <NotificationContentText notification={notification}>
+            <NotificationContentText notification={notificationItem}>
               <label>
-                <NotificationHighlight>{notification.sender.name}</NotificationHighlight>
+                <NotificationHighlight>{notificationItem.sender.name}</NotificationHighlight>
                 {notificationItem.type === notificationType.NEW_RECOMMENDATION_REQUEST &&
                   " solicitou para você uma recomendação"}
                 {notificationItem.type === notificationType.NEW_RECOMMENDATION_RECEIVED && (
                   <>
                     {" "}
                     fez uma recomendação sobre você:{" "}
-                    <NotificationHighlight>"{reduceString(notification.common.content, 55)}"</NotificationHighlight>
+                    <NotificationHighlight>"{reduceString(notificationItem.common.content, 55)}"</NotificationHighlight>
                   </>
                 )}
               </label>
@@ -186,8 +178,8 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText notification={notification}>
-              <NotificationHighlight>{notification.sender.name}</NotificationHighlight>
+            <NotificationContentText notification={notificationItem}>
+              <NotificationHighlight>{notificationItem.sender.name}</NotificationHighlight>
               {" gostou do seu comentário"}{" "}
               {notificationItem.common.publication_owner_id === profile?.profile_id ? (
                 " na sua publicação "
@@ -208,8 +200,8 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             url={`${links.web.social}publication/${notificationItem.common.publication_id}`}
             notification={notificationItem}
           >
-            <NotificationContentText notification={notification}>
-              <NotificationHighlight>{notification.sender.name} </NotificationHighlight>
+            <NotificationContentText notification={notificationItem}>
+              <NotificationHighlight>{notificationItem.sender.name} </NotificationHighlight>
               respondeu seu comentário{" "}
               {notificationItem.common.publication_owner_id === profile?.profile_id ? (
                 "na sua publicação"
@@ -230,9 +222,9 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             url={`${links.web.social}p/${notificationItem.sender.username}`}
             notification={notificationItem}
           >
-            <NotificationContentText notification={notification}>
+            <NotificationContentText notification={notificationItem}>
               <label>
-                <label style={{ textTransform: "capitalize" }}>{notification.sender.name}</label>
+                <label style={{ textTransform: "capitalize" }}>{notificationItem.sender.name}</label>
                 {" aceitou seu pedido de amizade"}
               </label>
             </NotificationContentText>
@@ -245,7 +237,7 @@ const SocialNetworkNotificationFactory: React.FC<IProps> = ({ notificationItem }
             url={`${links.web.social}p/${notificationItem.sender.username}`}
             notification={notificationItem}
           >
-            <NotificationContentText notification={notification}>
+            <NotificationContentText notification={notificationItem}>
               <NotificationHighlight>{notificationItem.sender.name}</NotificationHighlight> está fazendo aniversário
               hoje!
             </NotificationContentText>

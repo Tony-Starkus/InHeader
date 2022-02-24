@@ -17,7 +17,6 @@ const notificationType = {
   PENDING_RESEARCH: "PENDING_RESEARCH",
   USER_PENDING_RESEARCH: "USER_PENDING_RESEARCH",
   USER_PDI: "USER_PDI",
-  EVALUATOR_OF_ONE_PARTICIPANT: "EVALUATOR_OF_ONE_PARTICIPANT",
   EVALUATOR_OF_SURVEY_BY_COMPANY: "EVALUATOR_OF_SURVEY_BY_COMPANY",
   EVALUATOR_OF_SURVEY_BY_PERSON: "EVALUATOR_OF_SURVEY_BY_PERSON",
   END_RESEARCH: "END_RESEARCH",
@@ -51,7 +50,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
               Você foi convidado para a pesquisa{" "}
               <NotificationHighlight>{notification.common.name_research}</NotificationHighlight>, responda sua auto
               avaliação e gerencie seus avaliadores até{" "}
-              <NotificationHighlight>{notification.common.max_date}</NotificationHighlight>
+              <NotificationHighlight>{moment(notification.common.max_date).format("DD/MM/yyyy")}</NotificationHighlight>
             </NotificationContentText>
           </NotificationContainer>
         );
@@ -135,27 +134,14 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
           </NotificationContainer>
         );
 
-      case notificationType.EVALUATOR_OF_ONE_PARTICIPANT:
-        return (
-          <NotificationContainer
-            url={`${links.web.evaluation}questionary360/${notification.common.research_id}/${notification.common.company_id}/${notification.common.evaluated_id}`}
-            notification={notificationItem}
-          >
-            <NotificationContentText notification={notification}>
-              Você foi adicionado como avaliador de{" "}
-              <NotificationHighlight>"{notification.common.name_evaluated}"</NotificationHighlight> na pesquisa{" "}
-              <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight>
-            </NotificationContentText>
-          </NotificationContainer>
-        );
-
       case notificationType.EVALUATOR_OF_SURVEY_BY_COMPANY:
         return (
           <NotificationContainer url={`${links.web.evaluation}`} notification={notification}>
             <NotificationContentText notification={notification}>
-              Você foi adicionado como avaliador na pesquisa{" "}
-              <NotificationHighlight>"{notification.common.name_research}"</NotificationHighlight>. Clique para
-              responder
+              Você foi adicionado como avaliador na pesquisa de{" "}
+              <NotificationHighlight>{notification.common.name_evaluated}</NotificationHighlight>{" "}
+              {notification.common.count !== 0 && ` e outras ${notification.common.count} pessoas`} na pesquisa{" "}
+              <NotificationHighlight>{notification.common.name_research}</NotificationHighlight>.
             </NotificationContentText>
           </NotificationContainer>
         );
