@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { defineLinks } from "../../utils/functions";
-import { NotificationContainer, NotificationContentText, NotificationHighlight } from "./NotificationAbstract";
+import {
+  dateFormat,
+  NotificationContainer,
+  NotificationContentText,
+  NotificationHighlight,
+} from "./NotificationAbstract";
 import { useHeaderProvider } from "../../hooks/useHeaderProvider";
 import { NotificationProps } from "../../interfaces/Notification";
 
@@ -50,7 +55,7 @@ const EvaluationFactory: React.FC<IProps> = ({ notificationItem }) => {
               Você foi convidado para a pesquisa{" "}
               <NotificationHighlight>{notification.common.name_research}</NotificationHighlight>, responda sua auto
               avaliação e gerencie seus avaliadores até{" "}
-              <NotificationHighlight>{moment(notification.common.max_date).format("DD/MM/yyyy")}</NotificationHighlight>
+              <NotificationHighlight>{dateFormat(notification.common.max_date, "DD MMM")}</NotificationHighlight>
             </NotificationContentText>
           </NotificationContainer>
         );

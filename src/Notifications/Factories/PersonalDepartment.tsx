@@ -110,7 +110,7 @@ const PersonalDepartment: React.FC<IProps> = ({ notificationItem }) => {
             notification={notificationItem}
           >
             <NotificationContentText notification={notification}>
-              O prazo limite para o cadsatro de s uas informrraçaões sse encerra amanhã
+              O prazo limite para o cadastro de suas informações se encerra amanhã
             </NotificationContentText>
           </NotificationContainer>
         );

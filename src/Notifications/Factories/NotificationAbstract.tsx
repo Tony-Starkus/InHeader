@@ -9,6 +9,7 @@ import { SxProps } from "@mui/system";
 
 // TimeAgo
 import ReactTimeAgo from "react-time-ago";
+import moment from "moment";
 
 interface IProps {
   notification: NotificationProps;
@@ -134,6 +135,28 @@ export const NotificationHighlight: React.FC<{ sx?: SxProps<Theme> }> = ({ sx, c
 };
 
 export const reduceString = (value = "", length: number) => {
+  /**
+   * This function is used to add '...' on strings.
+   *
+   * params:
+   *  value: the string to reduce
+   *  length: number of max characters for the string
+   *
+   * return: string reduced
+   */
   if (value?.length <= length) return value;
   return `${value.slice(0, length - 3)}...`;
+};
+
+export const dateFormat = (date: string | Date, format: string) => {
+  /**
+   * This function is used to format dates on notifications text
+   *
+   * params:
+   *  date: a valid string date format or a javascript date object
+   *  format: string representing the format for date string return (must be an moment valid format)
+   *
+   * return: formated date as string
+   */
+  return moment(date).locale("pt-br").format(format);
 };
