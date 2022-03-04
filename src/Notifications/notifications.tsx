@@ -14,6 +14,7 @@ import { getNotifications, updateSawNotifications } from "../utils/functions/not
 import { useHeaderProvider } from "../hooks/useHeaderProvider";
 import { defineLinks } from "../utils/functions";
 import incicleModules from "../utils/incicleModules";
+import NotificationSkeleton from "../components/NotificationSkeleton";
 
 interface props {
   openNotifications: any;
@@ -316,7 +317,12 @@ const Notifications: React.FC<props> = ({
           {notificationFilters.type === notificationFilterType.ALL ? "Todas" : "Não lidas"}
         </Typography>
         {notificationsData.data.length > 0 ? (
-          notificationsData.data.map(item => <NotificationItem key={item._id} item={item} />)
+          <>
+            {notificationsData.data.map(item => (
+              <NotificationItem key={item._id} item={item} />
+            ))}
+            <NotificationSkeleton />
+          </>
         ) : (
           <Typography style={{ width: "100%", fontStyle: "italic", textAlign: "center", color: "#a8a8a8" }}>
             Não há notificações no momento
